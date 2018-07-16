@@ -1,6 +1,5 @@
 package com.example.trente.myapplication;
 
-import android.icu.lang.UScript;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,12 +7,12 @@ import android.widget.Button;
 
 import com.android.volley.VolleyError;
 import com.bluelinelabs.logansquare.LoganSquare;
+import com.example.trente.myapplication.base.BaseGetRequest;
 import com.example.trente.myapplication.base.OnResponseListener;
 import com.example.trente.myapplication.model.Utils;
-import com.example.trente.myapplication.user.UserListRequest;
-import com.example.trente.myapplication.user.UserListResponse;
 import com.example.trente.myapplication.user.UserModel;
 import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -70,31 +69,13 @@ public class MainActivity extends AppCompatActivity {
 //                String status = LoganSquare.parse("status",String);
             }
         };
-        UserListRequest request = new UserListRequest(listener);
+        BaseGetRequest request = new BaseGetRequest("http://192.168.1.125:9000/api/user/list", new TypeToken<JsonObject>(){}.getType(),listener);
 //        request.setEmail(email);
 //        request.setPassword(password);
 //        request.setDeviceToken(token);
+//        request.setPara();
         App.addRequest(request, "Login");
 
     }
 
-//    private class LoginResponseListener extends OnResponseListener<LoginResponse>{
-//        @Override
-//        public void onErrorResponse(VolleyError error) {
-//            onLoginError("Có lỗi xảy ra, vui lòng thử lại.");
-//            super.onErrorResponse(error);
-//        }
-//
-//        @Override
-//        public void onResponse(LoginResponse response) {
-//            super.onResponse(response);
-//            int status_code = response.getStatus_code();
-//            if (status_code == 0){
-//                onLoginSuccess(response.getLogin().getToken(), response.getLogin().getGarage());
-//                showMessage(response.getMessage());
-//            }else {
-//                onLoginError(response.getMessage());
-//            }
-//        }
-//    }
 }
