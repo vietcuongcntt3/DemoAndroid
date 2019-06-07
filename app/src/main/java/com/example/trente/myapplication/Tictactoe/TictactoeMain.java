@@ -123,6 +123,8 @@ public class TictactoeMain extends AppCompatActivity implements View.OnClickList
             }else if(result == WIN_GAME){
                 showDialog("X da thang");
 
+            }else if(result == 9) {
+                showDialog("Hoa");
             }else {
 
                 Node best = findBestMove(arrayValue);
@@ -138,6 +140,7 @@ public class TictactoeMain extends AppCompatActivity implements View.OnClickList
 
                 }
             }
+
         }
     }
 
@@ -159,10 +162,11 @@ public class TictactoeMain extends AppCompatActivity implements View.OnClickList
     }
 
     public int checkResult(int[][] arrayValue){
-
+        int count = 0;
         for(int i = 0; i < 3; i++){
             for(int j = 0;j< 3; j ++){
                 if(arrayValue[i][j] != DRAW_GAME) {
+                    count ++;
                     int result = checkNodeWin(arrayValue, i, j);
                     if (result != DRAW_GAME) {
                         return result;
@@ -170,6 +174,7 @@ public class TictactoeMain extends AppCompatActivity implements View.OnClickList
                 }
             }
         }
+        if(count == 9) return 9;
         return DRAW_GAME;
     }
 
