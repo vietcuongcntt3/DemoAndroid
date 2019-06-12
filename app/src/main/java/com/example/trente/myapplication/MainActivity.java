@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 //                String status = LoganSquare.parse("status",String);
             }
         };
-        BaseGetRequest request = new BaseGetRequest("http://192.168.1.125:9000/api/user/list", new TypeToken<JsonObject>(){}.getType(),listener);
+        BaseGetRequest request = new BaseGetRequest("https://cnv-tictactoe-test.000webhostapp.com/api.php/user", new TypeToken<JsonObject>(){}.getType(),listener);
 //        request.setEmail(email);
 //        request.setPassword(password);
 //        request.setDeviceToken(token);
