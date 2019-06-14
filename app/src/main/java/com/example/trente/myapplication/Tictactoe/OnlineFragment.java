@@ -17,7 +17,9 @@ import com.bluelinelabs.logansquare.LoganSquare;
 import com.example.trente.myapplication.App;
 import com.example.trente.myapplication.R;
 import com.example.trente.myapplication.Tictactoe.Model.RoomModel;
+import com.example.trente.myapplication.Tictactoe.ultils.SharedPreferencesUtils;
 import com.example.trente.myapplication.base.BaseGetRequest;
+import com.example.trente.myapplication.base.BasePostRequest;
 import com.example.trente.myapplication.base.OnResponseListener;
 import com.example.trente.myapplication.model.Utils;
 import com.example.trente.myapplication.user.UserModel;
@@ -41,7 +43,10 @@ public class OnlineFragment extends Fragment{
     public ListView lstRooms;
     public String response = "";
     public ArrayAdapter<String> adapter;
+    public List<RoomModel> rooms = new ArrayList<>();
     public Timer timer;
+    public String userId;
+    public String userName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,17 +57,22 @@ public class OnlineFragment extends Fragment{
         super.onActivityCreated(savedInstanceState);
 
         Button btnRight = (Button)getView().findViewById(R.id.btn_right);
+        btnRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerRom();
+            }
+        });
 
         lstRooms = (ListView) getView().findViewById(R.id.lst_room);
-        adapter = new ArrayAdapter<String>(getContext(),R.layout.row_devices);
+        adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1);
 
         lstRooms.setAdapter(adapter);
         lstRooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                NoteDetailFragment noteDetailFragment = new NoteDetailFragment();
-//                noteDetailFragment.noteId = adapter.notes.get(i).order_id;
-//                ((MainActivity)getContext()).addFragment(noteDetailFragment);
+                RoomModel room = rooms.get(i);
+                updateRoomJoiner(room.roomid, userId, userName);
             }
         });
 
@@ -75,7 +85,9 @@ public class OnlineFragment extends Fragment{
                 loadRooms();
             }
             },0, 1000);
-
+        SharedPreferencesUtils mShare = new SharedPreferencesUtils(getContext());
+        userName = mShare.readStringPreference("userName","");
+        userId = mShare.readStringPreference("userId", "");
     }
 
     public void loadRooms() {
@@ -97,11 +109,7 @@ public class OnlineFragment extends Fragment{
                 updateData(response.toString());
             }
         };
-        BaseGetRequest request = new BaseGetRequest("https://cnv-tictactoe-test.000webhostapp.com/apiroom.php/room", new TypeToken<JsonObject>(){}.getType(),listener);
-//        request.setEmail(email);
-//        request.setPassword(password);
-//        request.setDeviceToken(token);
-//        request.setPara();
+        BaseGetRequest request = new BaseGetRequest("http://192.168.1.125:8888/apiroom.php/rooms", new TypeToken<JsonObject>(){}.getType(),listener);
         App.addRequest(request, "Login");
 
     }
@@ -112,7 +120,7 @@ public class OnlineFragment extends Fragment{
             try {
                 JSONObject object = new JSONObject(response);
                 List<RoomModel> list = LoganSquare.parseList(object.optString("rooms"),RoomModel.class);
-                adapter.clear();
+//                adapter.clear();
                 List<String> roomsString = new ArrayList<>();
                 for(RoomModel room : list){
                     if(room.joiner_id != null && room.joiner_id != ""){
@@ -121,6 +129,7 @@ public class OnlineFragment extends Fragment{
                         roomsString.add(room.roomname + " (1/2) ");
                     }
                 }
+                this.rooms = list;
                 adapter.addAll(roomsString);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
@@ -131,6 +140,103 @@ public class OnlineFragment extends Fragment{
         }
 
     }
+
+    public void registerRom(){
+        if (!Utils.isNetworkAvailable(getActivity())){
+            return;
+        } else {
+            OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    super.onErrorResponse(error);
+                }
+
+                @Override
+                public void onResponse(JsonObject response) {
+
+                    super.onResponse(response);
+                    try {
+                        JSONObject object = new JSONObject(response.toString());
+                        if("1".equals(object.optString("returncode"))){
+                            RoomModel room = LoganSquare.parse(object.optString("room"), RoomModel.class);
+
+                            RoomDetailFragment fragment = new RoomDetailFragment();
+                            fragment.isAdmin = true;
+                            fragment.room = room;
+                            ((TictacActivity)getActivity()).addFragment(fragment);
+//                            ((TictacActivity)getActivity()).showMessage("register success!");
+                        }else {
+                            ((TictacActivity)getActivity()).showMessage("error!");
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/insert_room",
+                    new TypeToken<JsonObject>(){}.getType(),listener);
+
+            request.setParam("roomname", userName);
+            request.setParam("creatername", userName);
+            request.setParam("createrid", userId);
+            App.addRequest(request);
+
+        }
+    }
+
+    public void updateRoomJoiner(String roomId, String joinerId, String joinerName){
+        if (!Utils.isNetworkAvailable(getActivity())){
+            return;
+        } else {
+            OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                    super.onErrorResponse(error);
+                }
+
+                @Override
+                public void onResponse(JsonObject response) {
+
+                    super.onResponse(response);
+                    try {
+                        JSONObject object = new JSONObject(response.toString());
+                        if("1".equals(object.optString("returncode"))){
+                            RoomModel room = LoganSquare.parse(object.optString("room"), RoomModel.class);
+                            RoomDetailFragment fragment = new RoomDetailFragment();
+                            fragment.isAdmin = false;
+                            fragment.room = room;
+                            ((TictacActivity)getActivity()).addFragment(fragment);
+                        }else {
+                            ((TictacActivity)getActivity()).showMessage("error!");
+                        }
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+
+            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/update_room_joiner",
+                    new TypeToken<JsonObject>(){}.getType(),listener);
+
+            request.setParam("joinername", joinerName);
+            request.setParam("joinerid", joinerName);
+            request.setParam("roomid", roomId);
+            App.addRequest(request);
+
+        }
+    }
+
 
 
 }

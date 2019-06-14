@@ -13,6 +13,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,4 +68,20 @@ public class BaseGetRequest<T> extends BaseRequest<T> {
     public void setPara(String key, String value) {
         mParams.put(key, value);
     }
+
+    public static String addParamsForUrl(String url, Map<String, String> params){
+        StringBuilder encodedParams = new StringBuilder();
+        try {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                encodedParams.append(URLEncoder.encode(entry.getKey(),"UTF-8" ));
+                encodedParams.append('=');
+                encodedParams.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+                encodedParams.append('&');
+            }
+            return url + "?" + encodedParams.toString();
+        } catch (UnsupportedEncodingException uee) {
+            throw new RuntimeException("Encoding not supported: " + "UTF-8", uee);
+        }
+    }
+
 }

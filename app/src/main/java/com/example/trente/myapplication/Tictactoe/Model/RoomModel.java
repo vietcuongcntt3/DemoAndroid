@@ -22,7 +22,7 @@ public class RoomModel implements Serializable {
 
     public String joiner_id;
     public String joiner_date;
-    public String joine_name;
+    public String joiner_name;
 
 }
 
