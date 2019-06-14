@@ -102,6 +102,36 @@ class api extends restful_api {
 		}
     }
 
+    function delete_room_joiner(){
+		if ($this->method == 'POST'){
+
+            $data = array();
+            $database = new database();
+            $conn = $database->getConnection();
+            // Check connection
+            if (!$conn) {
+                $data["returncode"]="0";
+                $data["messages"]="Connection to Database failed";
+            }else {
+                 
+              // initialize object
+                $room = new Room($conn);
+                $room->roomid = $_POST["roomid"];
+                $result = $room->deleteRoomJoiner();
+                if($result != null && $result){
+                    $data["returncode"]="1";
+                    $data["messages"]="";
+                    
+                }else {
+                    $data["returncode"]="0";
+                    $data["messages"]="Systerm error";
+                }
+                mysqli_close($conn);
+            }
+			$this->response(200, $data);
+		}
+    }
+
     function update_room_data(){
 		if ($this->method == 'POST'){
 

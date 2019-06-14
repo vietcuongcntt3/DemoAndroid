@@ -75,7 +75,7 @@ public class RoomDetailFragment extends Fragment {
                 if(isAdmin){
                     deleteRoom(room.roomid);
                 }else {
-                    updateRoomJoiner(room.roomid, null, null);
+                    deleteRoomJoiner(room.roomid);
                 }
             }
         });
@@ -164,7 +164,7 @@ public class RoomDetailFragment extends Fragment {
 
     }
 
-    public void updateRoomJoiner(String roomId, String joinerId, String joinerName){
+    public void deleteRoomJoiner(String roomId){
         if (!Utils.isNetworkAvailable(getActivity())){
             return;
         } else {
@@ -194,11 +194,9 @@ public class RoomDetailFragment extends Fragment {
                 }
             };
 
-            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/update_room_joiner",
+            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/delete_room_joiner",
                     new TypeToken<JsonObject>(){}.getType(),listener);
 
-            request.setParam("joinername", joinerName);
-            request.setParam("joinerid", joinerName);
             request.setParam("roomid", roomId);
             App.addRequest(request);
 
