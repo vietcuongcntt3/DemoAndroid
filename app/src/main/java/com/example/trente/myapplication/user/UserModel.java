@@ -7,16 +7,11 @@ import java.io.Serializable;
 
 @JsonObject(fieldDetectionPolicy =JsonObject.FieldDetectionPolicy.NONPRIVATE_FIELDS)
 public class UserModel implements Serializable {
-    @SerializedName("user_name")
-    public String user_name;
-    @SerializedName("created_date")
-    public String created_date;
-    @SerializedName("token")
+    public String username;
+    public String date;
     public String token;
 
-    @SerializedName("point_vote")
-    public int point_vote;
+    public int vote;
 
-    @SerializedName("user_id")
-    public String user_id;
+    public String userid;
 }
