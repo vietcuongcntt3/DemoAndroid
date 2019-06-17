@@ -2,35 +2,19 @@ package com.example.trente.myapplication.Tictactoe;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.TextView;
-
-import com.android.volley.VolleyError;
 import com.bluelinelabs.logansquare.LoganSquare;
-import com.example.trente.myapplication.App;
 import com.example.trente.myapplication.R;
+import com.example.trente.myapplication.Tictactoe.FragmentBase.MyFragment;
 import com.example.trente.myapplication.Tictactoe.Model.RoomModel;
-import com.example.trente.myapplication.base.BaseGetRequest;
-import com.example.trente.myapplication.base.BasePostRequest;
-import com.example.trente.myapplication.base.OnResponseListener;
-import com.example.trente.myapplication.model.Utils;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONException;
+import com.example.trente.myapplication.Tictactoe.ultils.APIConfig;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +23,7 @@ import java.util.TimerTask;
  * Created by cuongnv on 6/14/19.
  */
 
-public class RoomDetailFragment extends Fragment {
+public class RoomDetailFragment extends MyFragment {
     public RoomModel room;
     public boolean isAdmin = false;
 
@@ -60,18 +44,19 @@ public class RoomDetailFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        player1Name = (TextView)getView().findViewById(R.id.txt_name1);
+
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
         if(room.creater_name != null) {
             player1Name.setText(room.creater_name);
         }
-        player2Name = (TextView)getView().findViewById(R.id.txt_name2);
-        btnClear = (Button)getView().findViewById(R.id.btn_clear);
-        btnStart = (Button)getView().findViewById(R.id.btn_start);
-        btnCancel = (Button)getView().findViewById(R.id.btn_cancel);
-
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                timer.cancel();
                 if(isAdmin){
                     deleteRoom(room.roomid);
                 }else {
@@ -83,6 +68,12 @@ public class RoomDetailFragment extends Fragment {
         if(isAdmin){
             btnStart.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
+            btnClear.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    deleteRoomJoiner(room.roomid);
+                }
+            });
 
         }else {
             btnStart.setVisibility(View.INVISIBLE);
@@ -90,58 +81,53 @@ public class RoomDetailFragment extends Fragment {
         }
 
         timer = new Timer();
-        //Set the schedule function
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                // Magic here
                 loadRoom();
             }
         },0, 1000);
     }
 
-    public void loadRoom() {
-        if (!Utils.isNetworkAvailable(getContext())){
-            return;
-        }
-
-        OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                super.onErrorResponse(error);
-            }
-
-            @Override
-            public void onResponse(JsonObject response) {
-
-                super.onResponse(response);
-                updateData(response.toString());
-            }
-        };
-        Map<String, String> params = new HashMap<>();
-        params.put("roomid", room.roomid);
-
-        String url = BaseGetRequest.addParamsForUrl("http://192.168.1.125:8888/apiroom.php/get_room", params);
-        BaseGetRequest request = new BaseGetRequest(url, new TypeToken<JsonObject>(){}.getType(),listener);
-//        request.setParam("roomid", room.roomid);
-        App.addRequest(request);
-
+    @Override
+    protected void initView() {
+        super.initView();
+        player1Name = (TextView)getView().findViewById(R.id.txt_name1);
+        player2Name = (TextView)getView().findViewById(R.id.txt_name2);
+        btnClear = (Button)getView().findViewById(R.id.btn_clear);
+        btnStart = (Button)getView().findViewById(R.id.btn_start);
+        btnCancel = (Button)getView().findViewById(R.id.btn_cancel);
     }
 
-    public void updateData(String response){
-        if(!this.response.equals(response)){
-            this.response = response;
+    public void loadRoom() {
+        Map<String, String> params = new HashMap<>();
+        params.put("roomid", room.roomid);
+        getRequest(APIConfig.API_GET_ROOM, params);
+    }
+
+    @Override
+    public void onGetSuccessResponse(JSONObject response, String responseUrl) {
+        super.onGetSuccessResponse(response, responseUrl);
+        updateData(response);
+    }
+
+    public void updateData(JSONObject response){
+        if(!this.response.equals(response.toString())){
+            this.response = response.toString();
             try {
-                JSONObject object = new JSONObject(response);
-                if("1".equals(object.optString("returncode"))) {
-                    RoomModel room = LoganSquare.parse(object.optString("room"), RoomModel.class);
-                    this.room = room;
-                    showRoom(room);
+                RoomModel room = LoganSquare.parse(response.optString("room"), RoomModel.class);
+                if(room != null){
+                    if(!isAdmin && room.joiner_id == null){
+                        timer.cancel();
+                        getFragmentManager().popBackStack();
+                    }else {
+                        this.room = room;
+                        showRoom(room);
+                    }
                 }else {
+                    timer.cancel();
                     getFragmentManager().popBackStack();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -150,6 +136,9 @@ public class RoomDetailFragment extends Fragment {
     }
 
     public void showRoom(RoomModel room){
+        if(room.creater_name != null){
+            player1Name.setText(room.creater_name);
+        }
         if(room.joiner_name != null){
             player2Name.setText(room.joiner_name);
             if(isAdmin){
@@ -165,80 +154,27 @@ public class RoomDetailFragment extends Fragment {
     }
 
     public void deleteRoomJoiner(String roomId){
-        if (!Utils.isNetworkAvailable(getActivity())){
-            return;
-        } else {
-            OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
-                @Override
-                public void onErrorResponse(VolleyError error) {
+        Map<String, String> params = new HashMap<>();
+        params.put("roomid", roomId);
+        postRequest(APIConfig.API_DELETE_ROOM_JOINER, params);
+    }
 
-                    super.onErrorResponse(error);
-                }
-
-                @Override
-                public void onResponse(JsonObject response) {
-
-                    super.onResponse(response);
-                    try {
-                        JSONObject object = new JSONObject(response.toString());
-                        if("1".equals(object.optString("returncode"))){
-                            getFragmentManager().popBackStack();
-                        }else {
-                            ((TictacActivity)getActivity()).showMessage("error!");
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/delete_room_joiner",
-                    new TypeToken<JsonObject>(){}.getType(),listener);
-
-            request.setParam("roomid", roomId);
-            App.addRequest(request);
-
+    @Override
+    public void onPostSuccessResponse(JSONObject response, String responseUrl) {
+        super.onPostSuccessResponse(response, responseUrl);
+        if(APIConfig.API_DELETE_ROOM_JOINER.equals(responseUrl)) {
+            if(!isAdmin){
+                getFragmentManager().popBackStack();
+            }
+        }else if(APIConfig.API_DELETE_ROOM.equals(responseUrl)){
+            getFragmentManager().popBackStack();
         }
     }
 
     public void deleteRoom(String roomId){
-        if (!Utils.isNetworkAvailable(getActivity())){
-            return;
-        } else {
-            OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    super.onErrorResponse(error);
-                }
-
-                @Override
-                public void onResponse(JsonObject response) {
-
-                    super.onResponse(response);
-                    try {
-                        JSONObject object = new JSONObject(response.toString());
-                        if("1".equals(object.optString("returncode"))){
-                            getFragmentManager().popBackStack();
-                        }else {
-                            ((TictacActivity)getActivity()).showMessage("error!");
-                        }
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/apiroom.php/delete_room",
-                    new TypeToken<JsonObject>(){}.getType(),listener);
-
-            request.setParam("roomid", roomId);
-            App.addRequest(request);
-
-        }
+        Map<String, String> params = new HashMap<>();
+        params.put("roomid", roomId);
+        postRequest(APIConfig.API_DELETE_ROOM, params);
     }
 
 

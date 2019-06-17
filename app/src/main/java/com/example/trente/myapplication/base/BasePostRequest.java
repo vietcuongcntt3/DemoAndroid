@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class BasePostRequest<T> extends BaseRequest<T> {
 
-    private Map<String, String> mParams = new HashMap<>();
+    public Map<String, String> mParams = new HashMap<>();
 
     protected static final Gson mGson = new GsonBuilder()
             .create();

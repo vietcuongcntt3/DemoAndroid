@@ -130,6 +130,7 @@ public class OnlineFragment extends Fragment{
                     }
                 }
                 this.rooms = list;
+                adapter.clear();
                 adapter.addAll(roomsString);
                 adapter.notifyDataSetChanged();
             } catch (JSONException e) {
@@ -230,7 +231,7 @@ public class OnlineFragment extends Fragment{
                     new TypeToken<JsonObject>(){}.getType(),listener);
 
             request.setParam("joinername", joinerName);
-            request.setParam("joinerid", joinerName);
+            request.setParam("joinerid", joinerId);
             request.setParam("roomid", roomId);
             App.addRequest(request);
 
