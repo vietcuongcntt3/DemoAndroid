@@ -57,7 +57,7 @@ class Room{
     }
 
     function deleteRoomJoiner(){
-        $query = "UPDATE ".$this->table_name." SET joiner_name = 'NULL', joiner_id = 'NULL' WHERE roomid ='".$this->roomid."'";
+        $query = "UPDATE ".$this->table_name." SET joiner_name = null, joiner_id = null WHERE roomid ='".$this->roomid."'";
         $result = mysqli_query($this->conn, $query);
         return $result;
     }

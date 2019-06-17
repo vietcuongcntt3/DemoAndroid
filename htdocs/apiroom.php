@@ -12,6 +12,7 @@ class api extends restful_api {
 	function rooms(){
 		if ($this->method == 'GET'){
             $data = array();
+            $data["return_api"]="apiroom.php/rooms";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -40,6 +41,7 @@ class api extends restful_api {
 		if ($this->method == 'POST'){
 
             $data = array();
+            $data["return_api"]="apiroom.php/insert_room";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -73,6 +75,7 @@ class api extends restful_api {
 		if ($this->method == 'POST'){
 
             $data = array();
+            $data["return_api"]="apiroom.php/update_room_joiner";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -106,6 +109,7 @@ class api extends restful_api {
 		if ($this->method == 'POST'){
 
             $data = array();
+            $data["return_api"]="apiroom.php/delete_room_joiner";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -136,6 +140,7 @@ class api extends restful_api {
 		if ($this->method == 'POST'){
 
             $data = array();
+            $data["return_api"]="apiroom.php/update_room_data";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -167,6 +172,7 @@ class api extends restful_api {
     function delete_room(){
 		if ($this->method == 'POST'){
             $data = array();
+            $data["return_api"]="apiroom.php/delete_room";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -197,6 +203,7 @@ class api extends restful_api {
 		if ($this->method == 'GET'){
 
             $data = array();
+            $data["return_api"]="apiroom.php/get_room";
             $database = new database();
             $conn = $database->getConnection();
             // Check connection
@@ -210,16 +217,13 @@ class api extends restful_api {
  
                 $room->roomid = $_GET["roomid"];
                 $result = $room->getRoom();
-                if($result != null){
                     $data["returncode"]="1";
+                if($result != null){
                     $data["messages"]="";
                     $data["room"] = $result;
                 }else {
-                    $data["returncode"]="0";
                     $data["messages"]="Not found";
                 }
-                $data["GET"]= json_encode($_GET);
-                $data["Post"]= json_encode($_POST);
                 mysqli_close($conn);
                 
 			
