@@ -81,12 +81,7 @@ public class RoomDetailFragment extends MyFragment {
         }
 
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                loadRoom();
-            }
-        },0, 1000);
+
     }
 
     @Override
@@ -175,6 +170,26 @@ public class RoomDetailFragment extends MyFragment {
         Map<String, String> params = new HashMap<>();
         params.put("roomid", roomId);
         postRequest(APIConfig.API_DELETE_ROOM, params);
+    }
+
+    @Override
+    public void pauseMyFragment(){
+        super.pauseMyFragment();
+        timer.cancel();
+
+    }
+
+    @Override
+    public void resumeMyFragment(){
+        super.resumeMyFragment();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                loadRoom();
+            }
+        },0, 1000);
+
+
     }
 
 

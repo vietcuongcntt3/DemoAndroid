@@ -3,6 +3,7 @@ package com.example.trente.myapplication.Tictactoe;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,26 +35,33 @@ public class OnlineFragment extends MyFragment{
     public String response = "";
     public ArrayAdapter<String> adapter;
     public List<RoomModel> rooms = new ArrayList<>();
+    public Button btAddRoom;
     public Timer timer;
     public String userId;
     public String userName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.e("cuong", "onCreateView");
         return inflater.inflate(R.layout.fragment_online, container, false);
     }
 
     @Override
     protected void initView() {
         super.initView();
-        Button btnRight = (Button)getView().findViewById(R.id.btn_right);
-        btnRight.setOnClickListener(new View.OnClickListener() {
+    }
+
+    @Override
+    protected void initData() {
+        super.initData();
+        btAddRoom = (Button)getView().findViewById(R.id.btn_right);
+        lstRooms = (ListView) getView().findViewById(R.id.lst_room);
+        btAddRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 registerRom();
             }
         });
-        lstRooms = (ListView) getView().findViewById(R.id.lst_room);
         adapter = new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1);
         lstRooms.setAdapter(adapter);
         lstRooms.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -64,18 +72,9 @@ public class OnlineFragment extends MyFragment{
             }
         });
 
-    }
-
-    @Override
-    protected void initData() {
-        super.initData();
+        this.response = "";
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                loadRooms();
-            }
-        },0, 1000);
+
         SharedPreferencesUtils mShare = new SharedPreferencesUtils(getContext());
         userName = mShare.readStringPreference("userName","");
         userId = mShare.readStringPreference("userId", "");
@@ -157,6 +156,27 @@ public class OnlineFragment extends MyFragment{
         params.put("joinerid", joinerId);
         params.put("roomid", roomId);
         postRequest(APIConfig.API_UPDATE_ROOM_JOINER, params);
+    }
+
+
+    @Override
+    public void pauseMyFragment(){
+        super.pauseMyFragment();
+        timer.cancel();
+
+    }
+
+    @Override
+    public void resumeMyFragment(){
+        super.resumeMyFragment();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                loadRooms();
+            }
+        },0, 1000);
+
+
     }
 
 

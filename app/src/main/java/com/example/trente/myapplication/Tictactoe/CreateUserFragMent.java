@@ -14,7 +14,9 @@ import com.bluelinelabs.logansquare.LoganSquare;
 import com.example.trente.myapplication.App;
 import com.example.trente.myapplication.Constant;
 import com.example.trente.myapplication.R;
+import com.example.trente.myapplication.Tictactoe.FragmentBase.MyFragment;
 import com.example.trente.myapplication.Tictactoe.Model.RoomModel;
+import com.example.trente.myapplication.Tictactoe.ultils.APIConfig;
 import com.example.trente.myapplication.Tictactoe.ultils.SharedPreferencesUtils;
 import com.example.trente.myapplication.base.BasePostRequest;
 import com.example.trente.myapplication.base.OnResponseListener;
@@ -27,13 +29,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cuongnv on 6/13/19.
  */
 
-public class CreateUserFragMent extends Fragment {
+public class CreateUserFragMent extends MyFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -42,6 +46,13 @@ public class CreateUserFragMent extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+
+    }
+
+    @Override
+    protected void initView() {
+        super.initView();
         final EditText edtName = (EditText)getView().findViewById(R.id.edt_name);
 
         Button btnSubmit = (Button)getView().findViewById(R.id.btn_submit);
@@ -56,60 +67,37 @@ public class CreateUserFragMent extends Fragment {
                 }
             }
         });
-
     }
 
-    public void registerUser(String name){
+    @Override
+    protected void initData() {
+        super.initData();
+    }
 
-        if (!Utils.isNetworkAvailable(getActivity())){
-            return;
-        } else {
-            OnResponseListener<JsonObject> listener = new OnResponseListener<JsonObject>(){
-                @Override
-                public void onErrorResponse(VolleyError error) {
+    @Override
+    public void onPostSuccessResponse(JSONObject response, String responseUrl) {
+        super.onPostSuccessResponse(response, responseUrl);
+        try {
+                UserModel user = LoganSquare.parse(response.optString("user"), UserModel.class);
+                SharedPreferencesUtils mShare = new SharedPreferencesUtils(getContext());
+                mShare.writeStringPreference("userId", user.userid);
+                mShare.writeStringPreference("userName", user.username);
 
-                    super.onErrorResponse(error);
-                }
-
-                @Override
-                public void onResponse(JsonObject response) {
-
-                    super.onResponse(response);
-                    try {
-                        JSONObject object = new JSONObject(response.toString());
-                        if("1".equals(object.optString("returncode"))){
-                            UserModel user = LoganSquare.parse(object.optString("user"), UserModel.class);
-                            SharedPreferencesUtils mShare = new SharedPreferencesUtils(getContext());
-                            mShare.writeStringPreference("userId", user.userid);
-                            mShare.writeStringPreference("userName", user.username);
-
-                            MainFragment fragment = new MainFragment();
-                            ((TictacActivity)getActivity()).addFragment(fragment);
-                            ((TictacActivity)getActivity()).showMessage("register success!");
-                        }else {
-                            ((TictacActivity)getActivity()).showMessage("error!");
-                        }
+                MainFragment fragment = new MainFragment();
+                ((TictacActivity)getActivity()).addFragment(fragment);
+                ((TictacActivity)getActivity()).showMessage("register success!");
 
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            BasePostRequest request = new BasePostRequest( "http://192.168.1.125:8888/api.php/insert_user",
-                    new TypeToken<JsonObject>(){}.getType(),listener);
-
-            request.setParam("username", name);
-            request.setParam("token", Utils.APP_TOKEN);
-            request.setParam("point", "100");
-            App.addRequest(request, "CompleteOrder");
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-
-
+    public void registerUser(String name){
+        Map<String, String> params = new HashMap<>();
+        params.put("username", name);
+        params.put("token", Utils.APP_TOKEN);
+        params.put("point", "100");
+        postRequest(APIConfig.API_INSERT_USER, params);
+    }
 }

@@ -3,6 +3,7 @@ package com.example.trente.myapplication.Tictactoe.FragmentBase;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.android.volley.VolleyError;
 import com.example.trente.myapplication.App;
@@ -138,6 +139,23 @@ public abstract class MyFragment extends Fragment{
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        pauseMyFragment();
 
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        resumeMyFragment();
+    }
+
+    public void pauseMyFragment(){
+    }
+
+    public void resumeMyFragment(){
+
+    }
 }
