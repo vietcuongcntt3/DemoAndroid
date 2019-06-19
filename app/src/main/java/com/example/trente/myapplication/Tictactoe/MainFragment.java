@@ -57,7 +57,8 @@ public class MainFragment extends Fragment{
         btnOffline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                OfflineFragment fragment = new OfflineFragment();
+//                OfflineFragment fragment = new OfflineFragment();
+                GamePlayFragment fragment = new GamePlayFragment();
                 ((TictacActivity)getActivity()).addFragment(fragment);
             }
         });

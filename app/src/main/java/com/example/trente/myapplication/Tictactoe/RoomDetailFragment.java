@@ -103,25 +103,27 @@ public class RoomDetailFragment extends MyFragment {
     @Override
     public void onGetSuccessResponse(JSONObject response, String responseUrl) {
         super.onGetSuccessResponse(response, responseUrl);
-        updateData(response);
+        updateData(response, responseUrl);
     }
 
-    public void updateData(JSONObject response){
+    public void updateData(JSONObject response, String responseUrl){
         if(!this.response.equals(response.toString())){
             this.response = response.toString();
             try {
-                RoomModel room = LoganSquare.parse(response.optString("room"), RoomModel.class);
-                if(room != null){
-                    if(!isAdmin && room.joiner_id == null){
+                if(APIConfig.API_GET_ROOM.equals(responseUrl)){
+                    RoomModel room = LoganSquare.parse(response.optString("room"), RoomModel.class);
+                    if(room != null){
+                        if(!isAdmin && room.joiner_id == null){
+                            timer.cancel();
+                            getFragmentManager().popBackStack();
+                        }else {
+                            this.room = room;
+                            showRoom(room);
+                        }
+                    }else {
                         timer.cancel();
                         getFragmentManager().popBackStack();
-                    }else {
-                        this.room = room;
-                        showRoom(room);
                     }
-                }else {
-                    timer.cancel();
-                    getFragmentManager().popBackStack();
                 }
             } catch (IOException e) {
                 e.printStackTrace();
