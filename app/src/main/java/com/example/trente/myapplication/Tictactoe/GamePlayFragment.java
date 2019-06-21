@@ -1,5 +1,6 @@
 package com.example.trente.myapplication.Tictactoe;
 
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.example.trente.myapplication.R;
 import com.example.trente.myapplication.Tictactoe.FragmentBase.MyFragment;
+import com.example.trente.myapplication.Tictactoe.Model.Heuristic;
 import com.example.trente.myapplication.Tictactoe.Model.ItemModel;
 import com.example.trente.myapplication.Tictactoe.Model.MinMaxModel;
 import com.example.trente.myapplication.Tictactoe.Model.NoteModel;
@@ -27,8 +29,9 @@ import java.util.Map;
  */
 
 public class GamePlayFragment extends MyFragment {
-    public static final int numberline = 3;
-    public static final int numberSameWin = 3;
+    public static final int maxdept = 5;
+    public static final int numberline = 12;
+    public static final int numberSameWin = 5;
     public MyCardView gameTable;
     public boolean enableTapGame = true;
     public boolean isX = true;
@@ -46,6 +49,7 @@ public class GamePlayFragment extends MyFragment {
         return inflater.inflate(R.layout.fragment_game_play, container, false);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void initData() {
         super.initData();
@@ -78,11 +82,11 @@ public class GamePlayFragment extends MyFragment {
 
                         int result = MinMaxModel.checkResult(arrayValue);
                         if(result == ME){
-                            showDialog(itemMe + " win!");
+                            showDialog(itemMe + " win!", true);
                         }else if(result == DRAWGAME) {
-                            showDialog("Draw Game! ");
+                            showDialog("Draw Game! ", true);
                         }else {
-                            MinMaxModel minMaxModel = new MinMaxModel(YOU, ME);
+                            Heuristic minMaxModel = new Heuristic(YOU, ME);
                             NoteModel best = minMaxModel.findBestMove(arrayValue);
 
                             ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
@@ -93,9 +97,9 @@ public class GamePlayFragment extends MyFragment {
 
                             result = MinMaxModel.checkResult(arrayValue);
                             if(result == YOU){
-                                showDialog(itemYou + " win!");
+                                showDialog(itemYou + " win!", true);
                             }else if(result == DRAWGAME) {
-                                showDialog("Draw Game! ");
+                                showDialog("Draw Game! ", true);
                             }
                             enableTapGame = true;
                         }
@@ -107,7 +111,7 @@ public class GamePlayFragment extends MyFragment {
         });
     }
 
-    public void showDialog(String message){
+    public void showDialog(String message, final boolean isEnd){
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("");
         builder.setMessage(message);
@@ -116,6 +120,9 @@ public class GamePlayFragment extends MyFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
+                if(isEnd){
+                    getFragmentManager().popBackStack();
+                }
             }
         });
         AlertDialog alertDialog = builder.create();
