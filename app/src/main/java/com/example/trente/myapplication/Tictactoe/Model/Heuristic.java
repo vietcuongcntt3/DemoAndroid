@@ -4,6 +4,9 @@ import android.util.Log;
 
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by cuongnv on 6/21/19.
  */
@@ -12,7 +15,7 @@ public class Heuristic {
     public int ME = 1;
     public int YOU = 2;
     public static final long MAX = 1000000;
-    public long MIN = -1000000;
+    public static long MIN = -1000000;
     public int co = 0;
 
     public ResultModel bestResult;
@@ -22,8 +25,8 @@ public class Heuristic {
         this.YOU = YOU;
     }
 
-    public long[] arrayAttack = new long[]{1, 3, 24, 192,1536, 12288, 98304};
-    public long[] arrayProtect = new long[]{0, 1, 9, 81, 729, 6561, 59049};
+    public static long[] arrayAttack = new long[]{1, 3, 24, 192,1536, 12288, 98304};
+    public static long[] arrayProtect = new long[]{0, 1, 9, 81, 729, 6561, 59049};
 
     public NoteModel findBestMove(int[][] array) {
         NoteModel bestNode = null;
@@ -49,7 +52,40 @@ public class Heuristic {
         return bestNode;
     }
 
-    public long countAttackRow(int[][]array, int x, int y){
+    public List<NoteModel> findListBestMove(int[][] array) {
+        List<NoteModel> bestListNode = new ArrayList<>();
+        long value = MIN;
+        for(int i = 0; i < GamePlayFragment.numberline; i++){
+            for(int j = 0; j < GamePlayFragment.numberline; j ++){
+                if(array[i][j] == GamePlayFragment.DEFAULT ){
+                    array[i][j] = ME;
+
+                    long valueNote = caculateNotePoint(array, i, j);
+                    if(valueNote > value){
+                        bestListNode.clear();
+                        NoteModel bestNode = new NoteModel(GamePlayFragment.DEFAULT, i, j);
+                        bestListNode.add(bestNode);
+                        value = valueNote;
+                    }else if(value == valueNote){
+                        NoteModel bestNode = new NoteModel(GamePlayFragment.DEFAULT, i, j);
+                        bestListNode.add(bestNode);
+                    }
+                    array[i][j] = GamePlayFragment.DEFAULT;
+                }
+            }
+        }
+//        Log.e("Co", bestNode.x + "    |  " + bestNode.y);
+        return bestListNode;
+    }
+
+    public static long caculateNotePoint(int[][]array, int i, int j){
+        long attack = countAttackRow(array, i, j) + countAttackColumn(array, i, j) + countAttackX1(array,i, j)
+                + countAttackX2(array, i, j);
+        long protect = countProtectRow(array, i, j) + countProtectColumn(array, i, j) + countProtectX1(array,i, j)
+                + countProtectX2(array, i, j);
+        return Math.max(attack, protect);
+    }
+    public static long countAttackRow(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         int bonous = 0;
@@ -89,7 +125,7 @@ public class Heuristic {
     }
 
 
-    public long countAttackColumn(int[][]array, int x, int y){
+    public static long countAttackColumn(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         int bonus = 0;
@@ -128,7 +164,7 @@ public class Heuristic {
         return arrayAttack[countMe + 1] - arrayProtect[countYou + 1] + bonus;
     }
 
-    public long countAttackX1(int[][]array, int x, int y){
+    public static long countAttackX1(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         int bonus = 0;
@@ -169,7 +205,7 @@ public class Heuristic {
         return arrayAttack[countMe + 1] - arrayProtect[countYou + 1] + bonus;
     }
 
-    public long countAttackX2(int[][]array, int x, int y){
+    public static long countAttackX2(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         int bonus = 0;
@@ -213,7 +249,7 @@ public class Heuristic {
 
     /////////////protect
 
-    public long countProtectRow(int[][]array, int x, int y){
+    public static long countProtectRow(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         for(int index = 1; index < 6; index ++){
@@ -246,7 +282,7 @@ public class Heuristic {
     }
 
 
-    public long countProtectColumn(int[][]array, int x, int y){
+    public static long countProtectColumn(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         for(int index = 1; index < 6; index ++){
@@ -281,7 +317,7 @@ public class Heuristic {
         return arrayProtect[countYou + 1];
     }
 
-    public long countProtectX1(int[][]array, int x, int y){
+    public static long countProtectX1(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         for(int index = 1; index < 6; index ++){
@@ -315,7 +351,7 @@ public class Heuristic {
         return arrayProtect[countYou + 1];
     }
 
-    public long countProtectX2(int[][]array, int x, int y){
+    public static long countProtectX2(int[][]array, int x, int y){
         int countMe = 0;
         int countYou = 0;
         for(int index = 1; index < 6; index ++){
