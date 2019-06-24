@@ -5,6 +5,8 @@ import android.util.Log;
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
 import com.example.trente.myapplication.Tictactoe.TictactoeMain;
 
+import java.util.List;
+
 /**
  * Created by cuongnv on 6/19/19.
  */
@@ -12,46 +14,64 @@ import com.example.trente.myapplication.Tictactoe.TictactoeMain;
 public class MinMaxModel {
     public int ME = 1;
     public int YOU = 2;
-    public static final int MAX = 10000;
-    public int MIN = -10000;
+    public static final long MAX = 100000;
+    public long MIN = -100000;
     public int co = 0;
 
     public ResultModel bestResult;
+//    public Heuristic heuristic;
 
     public MinMaxModel(int ME, int YOU){
         this.ME = ME;
         this.YOU = YOU;
+//        heuristic = new Heuristic(ME, YOU);
     }
 
     public NoteModel findBestMove(int[][] array) {
         NoteModel bestNode = null;
-        int anpha = MIN;
-        int beta = MAX;
+        long anpha = MIN;
+        long beta = MAX;
         bestResult = new ResultModel(GamePlayFragment.maxdept, MIN);
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            for(int j = 0; j < GamePlayFragment.numberline; j ++){
-                if(array[i][j] == GamePlayFragment.DEFAULT ){
-                    NoteModel node = new NoteModel(ME, i,j);
-                    ResultModel valueNode = calMinMax(node, array,false, 0, anpha, beta);
-                    array[i][j] = GamePlayFragment.DEFAULT;
-                    if(bestResult.point < valueNode.point){
-                        bestResult = valueNode;
-                        bestNode = node;
-                        anpha = bestResult.point;
-                        if(bestResult.point >= MAX){
-                            Log.e("Co", co + "");
-                            return bestNode;
-                        }
-                    }
+        List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
+        for(NoteModel node : nodes) {
+//            Log.e("Co123", node.x + "|" + node.y);
+            node.value = ME;
+            ResultModel valueNode = calMinMax(node, array,false, 0, anpha, beta);
+            array[node.x][node.y] = GamePlayFragment.DEFAULT;
+            if(bestResult.point < valueNode.point){
+                bestResult = valueNode;
+                bestNode = node;
+                anpha = bestResult.point;
+                if(bestResult.point >= MAX){
+
+                    return bestNode;
                 }
             }
         }
+//        for(int i = 0; i < GamePlayFragment.numberline; i++){
+//            for(int j = 0; j < GamePlayFragment.numberline; j ++){
+//                if(array[i][j] == GamePlayFragment.DEFAULT ){
+//                    NoteModel node = new NoteModel(ME, i,j);
+//                    ResultModel valueNode = calMinMax(node, array,false, 0, anpha, beta);
+//                    array[i][j] = GamePlayFragment.DEFAULT;
+//                    if(bestResult.point < valueNode.point){
+//                        bestResult = valueNode;
+//                        bestNode = node;
+//                        anpha = bestResult.point;
+//                        if(bestResult.point >= MAX){
+//                            Log.e("Co", co + "");
+//                            return bestNode;
+//                        }
+//                    }
+//                }
+//            }
+//        }
         Log.e("Co", co + "");
         return bestNode;
     }
 
 
-    public ResultModel calMinMax(NoteModel nodeChose, int[][] array, boolean isME, int dept, int anpha, int beta) {
+    public ResultModel calMinMax(NoteModel nodeChose, int[][] array, boolean isME, int dept, long anpha, long beta) {
         co ++;
         int[][] arrayValue = array;
 //        int aa = anpha;
@@ -68,52 +88,84 @@ public class MinMaxModel {
             int point = (isME)? GamePlayFragment.DRAWGAME + dept : GamePlayFragment.DRAWGAME - dept;
             return new ResultModel(dept, point);
         }else if(dept >= this.bestResult.dept) {
-            int calResult = calResult(arrayValue, nodeChose.x, nodeChose.y);
-            int point = (isME)? calResult: -calResult;
+            long calResult = Heuristic.caculateNotePoint(arrayValue, nodeChose.x, nodeChose.y);
+            long point = (isME)? calResult: -calResult;
             return new ResultModel(dept, point);
         }else {
             ResultModel valueResult;
             if (isME) {
                 valueResult = new ResultModel(GamePlayFragment.maxdept, MIN);
-                for (int i = 0; i < GamePlayFragment.numberline; i++) {
-                    for (int j = 0; j < GamePlayFragment.numberline; j++) {
-                        if (arrayValue[i][j] == GamePlayFragment.DEFAULT) {
-                            NoteModel node = new NoteModel(ME, i, j);
-                            ResultModel valueNode = calMinMax(node, arrayValue, false, dept + 1, anpha, beta);
-                            array[i][j] = GamePlayFragment.DEFAULT;
-                            if(valueResult.point < valueNode.point){
-                                valueResult = valueNode;
-                                if(valueResult.point > anpha){
-                                    anpha = valueResult.point;
-                                }
-                                if(valueResult.point <= beta){
-                                    return valueResult;
-                                }
-                            }
+
+                List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
+                for(NoteModel node : nodes) {
+                    node.value = ME;
+                    ResultModel valueNode = calMinMax(node, arrayValue, false, dept + 1, anpha, beta);
+                    array[node.x][node.y] = GamePlayFragment.DEFAULT;
+                    if(valueResult.point < valueNode.point){
+                        valueResult = valueNode;
+                        if(valueResult.point > anpha){
+                            anpha = valueResult.point;
+                        }
+                        if(valueResult.point <= beta){
+                            return valueResult;
                         }
                     }
                 }
+
+//                for (int i = 0; i < GamePlayFragment.numberline; i++) {
+//                    for (int j = 0; j < GamePlayFragment.numberline; j++) {
+//                        if (arrayValue[i][j] == GamePlayFragment.DEFAULT) {
+//                            NoteModel node = new NoteModel(ME, i, j);
+//                            ResultModel valueNode = calMinMax(node, arrayValue, false, dept + 1, anpha, beta);
+//                            array[i][j] = GamePlayFragment.DEFAULT;
+//                            if(valueResult.point < valueNode.point){
+//                                valueResult = valueNode;
+//                                if(valueResult.point > anpha){
+//                                    anpha = valueResult.point;
+//                                }
+//                                if(valueResult.point <= beta){
+//                                    return valueResult;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
             } else {
                 valueResult = new ResultModel(GamePlayFragment.maxdept, MAX);
-                for (int i = 0; i < GamePlayFragment.numberline; i++) {
-                    for (int j = 0; j < GamePlayFragment.numberline; j++) {
-                        if (arrayValue[i][j] == GamePlayFragment.DEFAULT) {
-                            NoteModel node = new NoteModel(YOU, i, j);
-                            ResultModel valueNode = calMinMax(node, arrayValue, true, dept + 1, anpha, beta);
-                            array[i][j] = GamePlayFragment.DEFAULT;
-                            if(valueResult.point > valueNode.point){
-                                valueResult = valueNode;
-                                if(valueResult.point <= anpha){
-                                    return valueResult;
-                                }
-                                if(valueResult.point < beta){
-                                    beta = valueResult.point;
-                                }
-                            }
+                List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
+                for(NoteModel node : nodes) {
+                    node.value = YOU;
+                    ResultModel valueNode = calMinMax(node, arrayValue, true, dept + 1, anpha, beta);
+                    array[node.x][node.y] = GamePlayFragment.DEFAULT;
+                    if(valueResult.point > valueNode.point){
+                        valueResult = valueNode;
+                        if(valueResult.point <= anpha){
+                            return valueResult;
+                        }
+                        if(valueResult.point < beta){
+                            beta = valueResult.point;
                         }
                     }
-
                 }
+//                for (int i = 0; i < GamePlayFragment.numberline; i++) {
+//                    for (int j = 0; j < GamePlayFragment.numberline; j++) {
+//                        if (arrayValue[i][j] == GamePlayFragment.DEFAULT) {
+//                            NoteModel node = new NoteModel(YOU, i, j);
+//                            ResultModel valueNode = calMinMax(node, arrayValue, true, dept + 1, anpha, beta);
+//                            array[i][j] = GamePlayFragment.DEFAULT;
+//                            if(valueResult.point > valueNode.point){
+//                                valueResult = valueNode;
+//                                if(valueResult.point <= anpha){
+//                                    return valueResult;
+//                                }
+//                                if(valueResult.point < beta){
+//                                    beta = valueResult.point;
+//                                }
+//                            }
+//                        }
+//                    }
+//
+//                }
 
             }
 
@@ -286,7 +338,7 @@ public class MinMaxModel {
         return result;
     }
 
-    public static int calPoint(int count, int numDefault, boolean isMe){
+    public static long calPoint(int count, int numDefault, boolean isMe){
         if(isMe){
             switch (count){
                 case 0:case 1:case 2:

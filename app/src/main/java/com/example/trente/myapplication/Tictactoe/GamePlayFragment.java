@@ -29,7 +29,7 @@ import java.util.Map;
  */
 
 public class GamePlayFragment extends MyFragment {
-    public static final int maxdept = 5;
+    public static final int maxdept = 9;
     public static final int numberline = 12;
     public static final int numberSameWin = 5;
     public MyCardView gameTable;
@@ -86,8 +86,11 @@ public class GamePlayFragment extends MyFragment {
                         }else if(result == DRAWGAME) {
                             showDialog("Draw Game! ", true);
                         }else {
-                            Heuristic minMaxModel = new Heuristic(YOU, ME);
-                            NoteModel best = minMaxModel.findBestMove(arrayValue);
+//                            MinMaxModel minMaxModel = new MinMaxModel(YOU, ME);
+//                            NoteModel best = minMaxModel.findBestMove(arrayValue);
+
+                            ControlTictacToe minMaxModel = new ControlTictacToe();
+                            NoteModel best = minMaxModel.AI(arrayValue, 2);
 
                             ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
                             gameTable.items.add(item2);

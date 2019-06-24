@@ -6,8 +6,8 @@ package com.example.trente.myapplication.Tictactoe.Model;
 
 public class ResultModel {
     public int dept;
-    public int point;
-    public ResultModel(int dept, int point){
+    public long point;
+    public ResultModel(int dept, long point){
         this.dept = dept;
         this.point = point;
     }
