@@ -64,6 +64,7 @@ public class GamePlayFragment extends MyFragment {
         mapImage.put("o",BitmapFactory.decodeResource(getResources(), R.drawable.o));
         gameTable = (MyCardView)getView().findViewById(R.id.gameplay_view);
 
+        
 
         gameTable.setOnTouchListener(new View.OnTouchListener() {
             @Override
