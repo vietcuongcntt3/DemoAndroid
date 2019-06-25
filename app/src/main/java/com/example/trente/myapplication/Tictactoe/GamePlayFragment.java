@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.example.trente.myapplication.R;
 import com.example.trente.myapplication.Tictactoe.FragmentBase.MyFragment;
@@ -19,6 +21,7 @@ import com.example.trente.myapplication.Tictactoe.Model.Heuristic;
 import com.example.trente.myapplication.Tictactoe.Model.ItemModel;
 import com.example.trente.myapplication.Tictactoe.Model.MinMaxModel;
 import com.example.trente.myapplication.Tictactoe.Model.NoteModel;
+import com.example.trente.myapplication.Tictactoe.view.MyBoardView;
 import com.example.trente.myapplication.Tictactoe.view.MyCardView;
 
 import java.util.HashMap;
@@ -30,9 +33,9 @@ import java.util.Map;
 
 public class GamePlayFragment extends MyFragment {
     public static final int maxdept = 9;
-    public static final int numberline = 12;
+    public static final int numberline = 20;
     public static final int numberSameWin = 5;
-    public MyCardView gameTable;
+//    public MyCardView gameTable;
     public boolean enableTapGame = true;
     public boolean isX = true;
     int[][] arrayValue = new int[numberline][numberline];
@@ -40,10 +43,12 @@ public class GamePlayFragment extends MyFragment {
     public final int YOU = 2;
     public static final int DEFAULT = 0;
     public static final int DRAWGAME = -1;
-    public String itemMe="x";
+    public String itemMe = "x";
     public String itemYou = "o";
+    public MyBoardView mBoard;
 
     Map<String, Bitmap> mapImage = new HashMap<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_game_play, container, false);
@@ -53,69 +58,86 @@ public class GamePlayFragment extends MyFragment {
     @Override
     protected void initData() {
         super.initData();
-        if(isX){
+        if (isX) {
             itemMe = "x";
-            itemYou="o";
-        }else {
+            itemYou = "o";
+        } else {
             itemMe = "o";
-            itemYou ="x";
+            itemYou = "x";
         }
-        mapImage.put("x",BitmapFactory.decodeResource(getResources(), R.drawable.x));
-        mapImage.put("o",BitmapFactory.decodeResource(getResources(), R.drawable.o));
-        gameTable = (MyCardView)getView().findViewById(R.id.gameplay_view);
+        mapImage.put("x", BitmapFactory.decodeResource(getResources(), R.drawable.x));
+        mapImage.put("o", BitmapFactory.decodeResource(getResources(), R.drawable.o));
 
-        
-
-        gameTable.setOnTouchListener(new View.OnTouchListener() {
+        mBoard = new MyBoardView(getContext());
+        final RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.rlt_table);
+        relativeLayout.addView(mBoard);
+        mBoard.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(enableTapGame){
-                    int x = gameTable.getLocationXY(event.getX());
-                    int y = gameTable.getLocationXY(event.getY());
+                int x = (int) event.getX();
+                int y = (int) event.getY();
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        mBoard.touchDownBoard(x, y);
+                        break;
 
-                    Log.e("cuongxy", x + "    |    " + y);
-                    if(arrayValue[x][y]== DEFAULT){
-                        enableTapGame = false;
-                        arrayValue[x][y] = ME;
-                        ItemModel item = new ItemModel(mapImage.get(itemMe), x, y);
-                        gameTable.items.add(item);
-                        gameTable.invalidate();
+                    case MotionEvent.ACTION_MOVE:
+                        int widthView = relativeLayout.getMeasuredWidth() - 6;
+                        int heightView = relativeLayout.getMeasuredHeight() - 6;
+                        mBoard.touchMoveBoard(x, y, widthView, heightView);
+                        break;
 
-                        int result = MinMaxModel.checkResult(arrayValue);
-                        if(result == ME){
-                            showDialog(itemMe + " win!", true);
-                        }else if(result == DRAWGAME) {
-                            showDialog("Draw Game! ", true);
-                        }else {
-//                            MinMaxModel minMaxModel = new MinMaxModel(YOU, ME);
-//                            NoteModel best = minMaxModel.findBestMove(arrayValue);
+                    case MotionEvent.ACTION_UP:
+                        if (enableTapGame && !mBoard.isMove) {
+                            int i = mBoard.getLocationXY(x, true);
+                            int j = mBoard.getLocationXY(y, false);
 
-                            ControlTictacToe minMaxModel = new ControlTictacToe();
-                            NoteModel best = minMaxModel.AI(arrayValue, 2);
+                            Log.e("dfqf", i + "|" + j) ;
+                            if (arrayValue[i][j] == DEFAULT) {
+                                enableTapGame = false;
+                                arrayValue[i][j] = ME;
+                                ItemModel item = new ItemModel(mapImage.get(itemMe), i, j);
+                                mBoard.items.add(item);
+                                mBoard.invalidate();
 
-                            ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
-                            gameTable.items.add(item2);
-                            gameTable.invalidate();
+                                int result = MinMaxModel.checkResult(arrayValue);
+                                if (result == ME) {
+                                    showDialog(itemMe + " win!", true);
+                                } else if (result == DRAWGAME) {
+                                    showDialog("Draw Game! ", true);
+                                } else {
 
-                            arrayValue[best.x][best.y] = YOU;
+                                    ControlTictacToe minMaxModel = new ControlTictacToe();
+                                    NoteModel best = minMaxModel.AI(arrayValue, 2);
 
-                            result = MinMaxModel.checkResult(arrayValue);
-                            if(result == YOU){
-                                showDialog(itemYou + " win!", true);
-                            }else if(result == DRAWGAME) {
-                                showDialog("Draw Game! ", true);
+                                    ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
+                                    mBoard.items.add(item2);
+                                    mBoard.invalidate();
+
+                                    arrayValue[best.x][best.y] = YOU;
+
+                                    result = MinMaxModel.checkResult(arrayValue);
+                                    if (result == YOU) {
+                                        showDialog(itemYou + " win!", true);
+                                    } else if (result == DRAWGAME) {
+                                        showDialog("Draw Game! ", true);
+                                    }
+                                    enableTapGame = true;
+                                }
+
                             }
-                            enableTapGame = true;
                         }
+                        break;
 
-                    }
+                    default:
+                        return false;
                 }
-                return false;
+                return true;
             }
         });
     }
 
-    public void showDialog(String message, final boolean isEnd){
+    public void showDialog(String message, final boolean isEnd) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("");
         builder.setMessage(message);
@@ -124,7 +146,7 @@ public class GamePlayFragment extends MyFragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
-                if(isEnd){
+                if (isEnd) {
                     getFragmentManager().popBackStack();
                 }
             }

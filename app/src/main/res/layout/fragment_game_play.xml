@@ -51,20 +51,22 @@
         android:layout_weight="1"
         android:gravity="center">
 
-        <LinearLayout
+        <RelativeLayout
+            android:id="@+id/rlt_table"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center">
+            android:layout_height="match_parent"
+            android:background="@drawable/gameplay_shape"
+            android:padding="3dp">
 
-            <com.example.trente.myapplication.Tictactoe.view.MyCardView
-                android:id="@+id/gameplay_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="3dp"
-                android:layout_marginRight="3dp"
-                android:background="@drawable/gameplay_shape"
-                android:foregroundGravity="center" />
-        </LinearLayout>
+            <!--<com.example.trente.myapplication.Tictactoe.view.MyCardView-->
+            <!--android:id="@+id/gameplay_view"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="3dp"-->
+            <!--android:layout_marginRight="3dp"-->
+            <!--android:background="@drawable/gameplay_shape"-->
+            <!--android:foregroundGravity="center" />-->
+        </RelativeLayout>
     </LinearLayout>
 
     <LinearLayout

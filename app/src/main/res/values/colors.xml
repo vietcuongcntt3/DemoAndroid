@@ -9,4 +9,6 @@
     <color name="layout_border_color">#FF111111</color>
     <color name="row_background">#ff00ffff</color>
     <color name="bg_drawable_menu">#083745</color>
+    <color name="bg_board">#faeedb</color>
+
 </resources>
