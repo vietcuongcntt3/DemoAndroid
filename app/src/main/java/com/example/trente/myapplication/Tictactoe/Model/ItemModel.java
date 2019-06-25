@@ -10,6 +10,7 @@ public class ItemModel {
     public int xLocal;
     public int yLocal;
     public Bitmap bitmap;
+    public boolean isDrawBackground = false;
 
     public ItemModel(Bitmap bitmap, int x, int y){
         this.bitmap = bitmap;

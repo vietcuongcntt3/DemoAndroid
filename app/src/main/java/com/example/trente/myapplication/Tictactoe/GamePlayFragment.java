@@ -1,6 +1,7 @@
 package com.example.trente.myapplication.Tictactoe;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -71,6 +72,14 @@ public class GamePlayFragment extends MyFragment {
         mBoard = new MyBoardView(getContext());
         final RelativeLayout relativeLayout = (RelativeLayout) getView().findViewById(R.id.rlt_table);
         relativeLayout.addView(mBoard);
+        relativeLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                int width = relativeLayout.getMeasuredWidth();
+                int height = relativeLayout.getMeasuredHeight();
+                mBoard.updateBegin(width, height);
+            }
+        });
         mBoard.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -97,7 +106,12 @@ public class GamePlayFragment extends MyFragment {
                                 enableTapGame = false;
                                 arrayValue[i][j] = ME;
                                 ItemModel item = new ItemModel(mapImage.get(itemMe), i, j);
-                                mBoard.items.add(item);
+                                item.isDrawBackground = true;
+                                if(!mBoard.items.empty()){
+                                    ItemModel itemFirst = mBoard.items.firstElement();
+                                    itemFirst.isDrawBackground = false;
+                                }
+                                mBoard.items.push(item);
                                 mBoard.invalidate();
 
                                 int result = MinMaxModel.checkResult(arrayValue);
@@ -111,7 +125,12 @@ public class GamePlayFragment extends MyFragment {
                                     NoteModel best = minMaxModel.AI(arrayValue, 2);
 
                                     ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
-                                    mBoard.items.add(item2);
+                                    if(!mBoard.items.empty()){
+                                        ItemModel itemFirst = mBoard.items.firstElement();
+                                        itemFirst.isDrawBackground = false;
+                                    }
+                                    item2.isDrawBackground = true;
+                                    mBoard.items.push(item2);
                                     mBoard.invalidate();
 
                                     arrayValue[best.x][best.y] = YOU;

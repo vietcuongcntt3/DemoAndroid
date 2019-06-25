@@ -15,19 +15,21 @@ import com.example.trente.myapplication.Tictactoe.ultils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Created by cuongnv on 6/25/19.
  */
 
 public class MyBoardView extends RelativeLayout {
-    public List<ItemModel> items = new ArrayList<>();
+    public Stack<ItemModel> items = new Stack<>();
     public RelativeLayout.LayoutParams params;
     public Paint mPaint = new Paint();
     public int frameWidth;
     public int frameHeight;
     public int x, y;
     public int xTouch, yTouch;
+    public int previousx, previousy;
     public boolean isMove = false;
 
     public MyBoardView(Context context) {
@@ -48,6 +50,8 @@ public class MyBoardView extends RelativeLayout {
         this.isMove = false;
         this.x = params.leftMargin;
         this.y = params.topMargin;
+        this.previousx = this.x;
+        this.previousy = this.y;
     }
 
 //    public void touchUpBoard(int x, int y) {
@@ -76,13 +80,14 @@ public class MyBoardView extends RelativeLayout {
             params.leftMargin = widthView - frameWidth;
         }
 
-        if(!isMove && (Math.abs(params.leftMargin - this.x) > 15 || Math.abs(params.topMargin - this.y) > 15)){
+        if(!isMove && (Math.abs(x - this.x) > 20 || Math.abs(y - this.y) > 20)){
             isMove = true;
-            Log.e("dfqf", "true");
+//            Log.e("dfqf", "true");
         }
 
+
         setLayoutParams(params);
-        invalidate();
+//        invalidate();
     }
 
     @Override
@@ -110,8 +115,13 @@ public class MyBoardView extends RelativeLayout {
         canvas.save();
         canvas.translate(item.xLocal *Const.SIZE_CHEESE + 8, item.yLocal * Const.SIZE_CHEESE + 8);
         canvas.scale(scale,scale);
-
+        if(item.isDrawBackground) {
+            Paint p = new Paint();
+            p.setColor(Color.YELLOW);
+            canvas.drawRect(-4, -4, bmWidth + 4, bmWidth + 4, p);
+        }
         canvas.drawBitmap(item.bitmap, 0, 0, mPaint);
+
         canvas.restore();
     }
 
@@ -125,5 +135,13 @@ public class MyBoardView extends RelativeLayout {
         if(index < 0) index = 0;
         return index;
     }
+
+    public void updateBegin(int width, int height){
+        params.leftMargin = (width - frameWidth)/2;
+        params.topMargin = (height - frameWidth)/2;
+        setLayoutParams(params);
+    }
+
+
 
 }
