@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
 import com.example.trente.myapplication.Tictactoe.TictactoeMain;
+import com.example.trente.myapplication.Tictactoe.view.MyBoardView;
 
 import java.util.List;
 
@@ -175,13 +176,14 @@ public class MinMaxModel {
 
 
 
-    public static int checkResult(int[][] arrayValue){
+    public static int checkResult(int[][] arrayValue, MyBoardView board){
         int count = 0;
         for(int i = 0; i < GamePlayFragment.numberline; i++){
             for(int j = 0;j< GamePlayFragment.numberline; j ++){
                 if(arrayValue[i][j] != GamePlayFragment.DEFAULT) {
                     count ++;
-                    if(checkRow(arrayValue, i,j)||checkColm(arrayValue, i, j)||checkX1(arrayValue, i, j)||checkX2(arrayValue, i, j)){
+                    if(checkRow(arrayValue, i,j, board)||checkColm(arrayValue, i, j, board)
+                            ||checkX1(arrayValue, i, j, board)||checkX2(arrayValue, i, j, board)){
                         return arrayValue[i][j];
                     }
                 }
@@ -191,7 +193,7 @@ public class MinMaxModel {
         return GamePlayFragment.DEFAULT;
     }
 
-    public static boolean checkRow(int[][]arrayValue, int x, int y){
+    public static boolean checkRow(int[][]arrayValue, int x, int y, MyBoardView board){
         if(y + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
             return false;
         }
@@ -200,10 +202,16 @@ public class MinMaxModel {
                 return false;
             }
         }
+
+        for(ItemModel item : board.items){
+            if( item.yLocal > y && item.yLocal < y + GamePlayFragment.numberline && item.xLocal == x){
+                item.isDrawBackground = true;
+            }
+        }
         return true;
     }
 
-    public static boolean checkColm(int[][]arrayValue, int x, int y){
+    public static boolean checkColm(int[][]arrayValue, int x, int y, MyBoardView board){
         if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
             return false;
         }
@@ -212,11 +220,15 @@ public class MinMaxModel {
                 return false;
             }
         }
-
+        for(ItemModel item : board.items){
+            if( item.xLocal > x && item.xLocal < x + GamePlayFragment.numberline && item.yLocal == y){
+                item.isDrawBackground = true;
+            }
+        }
         return true;
     }
 
-    public static boolean checkX1(int[][]arrayValue, int x, int y){
+    public static boolean checkX1(int[][]arrayValue, int x, int y, MyBoardView board){
         if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline || y + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
             return false;
         }
@@ -225,10 +237,16 @@ public class MinMaxModel {
                 return false;
             }
         }
+
+        for(ItemModel item : board.items){
+            if( item.yLocal > y && item.yLocal < y + GamePlayFragment.numberline && item.xLocal == item.yLocal){
+                item.isDrawBackground = true;
+            }
+        }
         return true;
     }
 
-    public static boolean checkX2(int[][]arrayValue, int x, int y){
+    public static boolean checkX2(int[][]arrayValue, int x, int y, MyBoardView board){
         if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline || y - GamePlayFragment.numberSameWin + 1 < 0){
             return false;
         }
@@ -237,6 +255,14 @@ public class MinMaxModel {
                 return false;
             }
         }
+
+        for(ItemModel item : board.items){
+            if( item.xLocal > x && item.xLocal < x + GamePlayFragment.numberline
+                    && item.yLocal < y && item.yLocal > y - GamePlayFragment.numberSameWin){
+                item.isDrawBackground = true;
+            }
+        }
+
         return true;
     }
 

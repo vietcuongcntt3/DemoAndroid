@@ -22,7 +22,7 @@ import java.util.Stack;
  */
 
 public class MyBoardView extends RelativeLayout {
-    public Stack<ItemModel> items = new Stack<>();
+    public List<ItemModel> items = new ArrayList<>();
     public RelativeLayout.LayoutParams params;
     public Paint mPaint = new Paint();
     public int frameWidth;

@@ -107,14 +107,14 @@ public class GamePlayFragment extends MyFragment {
                                 arrayValue[i][j] = ME;
                                 ItemModel item = new ItemModel(mapImage.get(itemMe), i, j);
                                 item.isDrawBackground = true;
-                                if(!mBoard.items.empty()){
-                                    ItemModel itemFirst = mBoard.items.firstElement();
-                                    itemFirst.isDrawBackground = false;
+                                if(!mBoard.items.isEmpty()){
+                                    mBoard.items.get(0).isDrawBackground = false;
+//                                    itemFirst.isDrawBackground = false;
                                 }
-                                mBoard.items.push(item);
+                                mBoard.items.add(0, item);
                                 mBoard.invalidate();
 
-                                int result = MinMaxModel.checkResult(arrayValue);
+                                int result = MinMaxModel.checkResult(arrayValue, mBoard);
                                 if (result == ME) {
                                     showDialog(itemMe + " win!", true);
                                 } else if (result == DRAWGAME) {
@@ -125,17 +125,17 @@ public class GamePlayFragment extends MyFragment {
                                     NoteModel best = minMaxModel.AI(arrayValue, 2);
 
                                     ItemModel item2 = new ItemModel(mapImage.get(itemYou), best.x, best.y);
-                                    if(!mBoard.items.empty()){
-                                        ItemModel itemFirst = mBoard.items.firstElement();
-                                        itemFirst.isDrawBackground = false;
+                                    if(!mBoard.items.isEmpty()){
+                                        mBoard.items.get(0).isDrawBackground = false;
+//                                        itemFirst.isDrawBackground = false;
                                     }
                                     item2.isDrawBackground = true;
-                                    mBoard.items.push(item2);
+                                    mBoard.items.add(0,item2);
                                     mBoard.invalidate();
 
                                     arrayValue[best.x][best.y] = YOU;
 
-                                    result = MinMaxModel.checkResult(arrayValue);
+                                    result = MinMaxModel.checkResult(arrayValue, mBoard);
                                     if (result == YOU) {
                                         showDialog(itemYou + " win!", true);
                                     } else if (result == DRAWGAME) {
