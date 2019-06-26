@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
 import com.example.trente.myapplication.Tictactoe.TictactoeMain;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
 import com.example.trente.myapplication.Tictactoe.view.MyBoardView;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class MinMaxModel {
         NoteModel bestNode = null;
         long anpha = MIN;
         long beta = MAX;
-        bestResult = new ResultModel(GamePlayFragment.maxdept, MIN);
+        bestResult = new ResultModel(Const.MAX_DEPT, MIN);
         List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
         for(NoteModel node : nodes) {
 //            Log.e("Co123", node.x + "|" + node.y);
@@ -95,7 +96,7 @@ public class MinMaxModel {
         }else {
             ResultModel valueResult;
             if (isME) {
-                valueResult = new ResultModel(GamePlayFragment.maxdept, MIN);
+                valueResult = new ResultModel(Const.MAX_DEPT, MIN);
 
                 List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
                 for(NoteModel node : nodes) {
@@ -132,7 +133,7 @@ public class MinMaxModel {
 //                    }
 //                }
             } else {
-                valueResult = new ResultModel(GamePlayFragment.maxdept, MAX);
+                valueResult = new ResultModel(Const.MAX_DEPT, MAX);
                 List<NoteModel> nodes = Heuristic.findListBestMove(array, ME);
                 for(NoteModel node : nodes) {
                     node.value = YOU;
@@ -178,8 +179,8 @@ public class MinMaxModel {
 
     public static int checkResult(int[][] arrayValue, MyBoardView board){
         int count = 0;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            for(int j = 0;j< GamePlayFragment.numberline; j ++){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
+            for(int j = 0;j< Const.NUMBER_ROWS; j ++){
                 if(arrayValue[i][j] != GamePlayFragment.DEFAULT) {
                     count ++;
                     if(checkRow(arrayValue, i,j, board)||checkColm(arrayValue, i, j, board)
@@ -189,22 +190,22 @@ public class MinMaxModel {
                 }
             }
         }
-        if(count == GamePlayFragment.numberline * GamePlayFragment.numberline) return GamePlayFragment.DRAWGAME;
+        if(count == Const.NUMBER_ROWS * Const.NUMBER_ROWS) return GamePlayFragment.DRAWGAME;
         return GamePlayFragment.DEFAULT;
     }
 
     public static boolean checkRow(int[][]arrayValue, int x, int y, MyBoardView board){
-        if(y + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
+        if(y + Const.NUMBER_WIN - 1 >= Const.NUMBER_ROWS){
             return false;
         }
-        for(int i = 1;i < GamePlayFragment.numberSameWin; i ++){
+        for(int i = 1;i < Const.NUMBER_WIN; i ++){
             if(arrayValue[x][y+i]!= arrayValue[x][y]){
                 return false;
             }
         }
 
         for(ItemModel item : board.items){
-            if( item.yLocal > y && item.yLocal < y + GamePlayFragment.numberline && item.xLocal == x){
+            if( item.yLocal > y && item.yLocal < y + Const.NUMBER_ROWS && item.xLocal == x){
                 item.isDrawBackground = true;
             }
         }
@@ -212,16 +213,16 @@ public class MinMaxModel {
     }
 
     public static boolean checkColm(int[][]arrayValue, int x, int y, MyBoardView board){
-        if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
+        if(x + Const.NUMBER_WIN - 1 >= Const.NUMBER_ROWS){
             return false;
         }
-        for(int i = 1;i < GamePlayFragment.numberSameWin; i ++){
+        for(int i = 1;i < Const.NUMBER_WIN; i ++){
             if(arrayValue[x+i][y]!= arrayValue[x][y]){
                 return false;
             }
         }
         for(ItemModel item : board.items){
-            if( item.xLocal > x && item.xLocal < x + GamePlayFragment.numberline && item.yLocal == y){
+            if( item.xLocal > x && item.xLocal < x + Const.NUMBER_ROWS && item.yLocal == y){
                 item.isDrawBackground = true;
             }
         }
@@ -229,17 +230,17 @@ public class MinMaxModel {
     }
 
     public static boolean checkX1(int[][]arrayValue, int x, int y, MyBoardView board){
-        if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline || y + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline){
+        if(x + Const.NUMBER_WIN - 1 >= Const.NUMBER_ROWS || y + Const.NUMBER_WIN - 1 >= Const.NUMBER_ROWS){
             return false;
         }
-        for(int i = 1;i < GamePlayFragment.numberSameWin; i ++){
+        for(int i = 1;i < Const.NUMBER_WIN; i ++){
             if(arrayValue[x+i][y+i]!= arrayValue[x][y]){
                 return false;
             }
         }
 
         for(ItemModel item : board.items){
-            if( item.yLocal > y && item.yLocal < y + GamePlayFragment.numberline && item.xLocal == item.yLocal){
+            if( item.yLocal > y && item.yLocal < y + Const.NUMBER_ROWS && item.xLocal - item.yLocal == x - y){
                 item.isDrawBackground = true;
             }
         }
@@ -247,18 +248,18 @@ public class MinMaxModel {
     }
 
     public static boolean checkX2(int[][]arrayValue, int x, int y, MyBoardView board){
-        if(x + GamePlayFragment.numberSameWin - 1 >= GamePlayFragment.numberline || y - GamePlayFragment.numberSameWin + 1 < 0){
+        if(x + Const.NUMBER_WIN - 1 >= Const.NUMBER_ROWS || y - Const.NUMBER_WIN + 1 < 0){
             return false;
         }
-        for(int i = 1;i < GamePlayFragment.numberSameWin; i ++){
+        for(int i = 1;i < Const.NUMBER_WIN; i ++){
             if(arrayValue[x+i][y-i]!= arrayValue[x][y]){
                 return false;
             }
         }
 
         for(ItemModel item : board.items){
-            if( item.xLocal > x && item.xLocal < x + GamePlayFragment.numberline
-                    && item.yLocal < y && item.yLocal > y - GamePlayFragment.numberSameWin){
+            if( item.xLocal > x && item.xLocal < x + Const.NUMBER_ROWS
+                    && item.yLocal < y && item.yLocal > y - Const.NUMBER_WIN &&  item.xLocal + item.yLocal == x + y){
                 item.isDrawBackground = true;
             }
         }
@@ -268,8 +269,8 @@ public class MinMaxModel {
 
 
     public static boolean isDrawGame(int[][]arrayValue){
-        for(int i = 0; i < GamePlayFragment.numberline; i++) {
-            for (int j = 0; j < GamePlayFragment.numberline; j++) {
+        for(int i = 0; i < Const.NUMBER_ROWS; i++) {
+            for (int j = 0; j < Const.NUMBER_ROWS; j++) {
                 if (arrayValue[i][j] == GamePlayFragment.DEFAULT) {
                     return false;
                 }
@@ -289,14 +290,14 @@ public class MinMaxModel {
 
     public static boolean isWinRow(int[][]array, int x, int y){
         int count = 0;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
             if(array[i][y]==array[x][y]){
                 count ++;
             }else {
                 count = 0;
             }
         }
-        if(count >= GamePlayFragment.numberSameWin){
+        if(count >= Const.NUMBER_WIN){
             return true;
         }
         return false;
@@ -304,14 +305,14 @@ public class MinMaxModel {
 
     public static boolean isWinCol(int[][]array, int x, int y){
         int count = 0;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
             if(array[x][i]==array[x][y]){
                 count ++;
             }else {
                 count = 0;
             }
         }
-        if(count >= GamePlayFragment.numberSameWin){
+        if(count >= Const.NUMBER_WIN){
             return true;
         }
         return false;
@@ -319,8 +320,8 @@ public class MinMaxModel {
 
     public static boolean isWinX1(int[][]array, int x, int y){
         int count = 0;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            if(i - x + y >= 0 && i -x + y < GamePlayFragment.numberline){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
+            if(i - x + y >= 0 && i -x + y < Const.NUMBER_ROWS){
                 if(array[i][i - x + y]==array[x][y]){
                     count ++;
                 }else {
@@ -329,7 +330,7 @@ public class MinMaxModel {
             }
 
         }
-        if(count >= GamePlayFragment.numberSameWin){
+        if(count >= Const.NUMBER_WIN){
             return true;
         }
         return false;
@@ -337,8 +338,8 @@ public class MinMaxModel {
 
     public static boolean isWinX2(int[][]array, int x, int y){
         int count = 0;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            if(x + y - i  < GamePlayFragment.numberline && x + y - i >= 0){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
+            if(x + y - i  < Const.NUMBER_ROWS && x + y - i >= 0){
                 if(array[i][x + y - i]==array[x][y]){
                     count ++;
                 }else {
@@ -347,7 +348,7 @@ public class MinMaxModel {
             }
 
         }
-        if(count >= GamePlayFragment.numberSameWin){
+        if(count >= Const.NUMBER_WIN){
             return true;
         }
         return false;
@@ -406,7 +407,7 @@ public class MinMaxModel {
         int numDefault = 0;
         int point = 0;
         boolean isDoubleDefault = false;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
             if(array[i][y]==array[x][y]){
                 count ++;
             }else if(array[i][y] == GamePlayFragment.DEFAULT){
@@ -434,7 +435,7 @@ public class MinMaxModel {
         int numDefault = 0;
         int point = 0;
         boolean isDoubleDefault = false;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
             if(array[x][i]==array[x][y]){
                 count ++;
             }else if(array[x][i] == GamePlayFragment.DEFAULT){
@@ -461,8 +462,8 @@ public class MinMaxModel {
         int numDefault = 0;
         int point = 0;
         boolean isDoubleDefault = false;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            if(i - x + y >= 0 && i -x + y < GamePlayFragment.numberline){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
+            if(i - x + y >= 0 && i -x + y < Const.NUMBER_ROWS){
                 int value = array[i][i - x + y];
                 if(value == array[x][y]){
                     count ++;
@@ -492,8 +493,8 @@ public class MinMaxModel {
         int numDefault = 0;
         int point = 0;
         boolean isDoubleDefault = false;
-        for(int i = 0; i < GamePlayFragment.numberline; i++){
-            if(x + y - i  < GamePlayFragment.numberline && x + y - i >= 0){
+        for(int i = 0; i < Const.NUMBER_ROWS; i++){
+            if(x + y - i  < Const.NUMBER_ROWS && x + y - i >= 0){
                 int value = array[i][x + y - i];
                 if(value == array[x][y]){
                     count ++;

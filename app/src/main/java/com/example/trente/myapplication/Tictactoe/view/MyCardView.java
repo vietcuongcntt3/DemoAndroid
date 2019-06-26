@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import com.example.trente.myapplication.R;
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
 import com.example.trente.myapplication.Tictactoe.Model.ItemModel;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +57,10 @@ public class MyCardView extends View {
         super.onDraw(canvas);
         //width = height
         float with = getMeasuredWidth();
-        float xWidth = with/ GamePlayFragment.numberline;
+        float xWidth = with/ Const.NUMBER_ROWS;
         mPaint.setColor(Color.RED);
         mPaint.setStrokeWidth(2f);
-        for(int i = 1;i < GamePlayFragment.numberline; i++){
+        for(int i = 1;i < Const.NUMBER_ROWS; i++){
             canvas.drawLine(0, i*xWidth, with, i * xWidth, mPaint);
             canvas.drawLine(i*xWidth, 0, i *xWidth, with, mPaint);
         }
@@ -70,8 +71,8 @@ public class MyCardView extends View {
     }
 
     public int getLocationXY(float x){
-        int index = GamePlayFragment.numberline - 1;
-        int xWidth = getMeasuredWidth()/GamePlayFragment.numberline;
+        int index = Const.NUMBER_ROWS - 1;
+        int xWidth = getMeasuredWidth()/Const.NUMBER_ROWS;
         while(index * xWidth >  x){
             index --;
         }
@@ -80,7 +81,7 @@ public class MyCardView extends View {
     }
 
     public void drawitem(Canvas canvas, ItemModel item, float size){
-        int width = getMeasuredWidth()/GamePlayFragment.numberline - 16;
+        int width = getMeasuredWidth()/Const.NUMBER_ROWS - 16;
 
         float bmWidth = item.bitmap.getWidth();
         float scale = width/bmWidth;

@@ -1,6 +1,7 @@
 package com.example.trente.myapplication.Tictactoe;
 
 import com.example.trente.myapplication.Tictactoe.Model.NoteModel;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ControlTictacToe {
         int i;
         boolean human, pc;
         // Check hang ngang
-        while (c < GamePlayFragment.numberline - 4) {
+        while (c < Const.NUMBER_ROWS - 4) {
             human = true;
             pc = true;
             for (i = 0; i < 5; i++) {
@@ -39,7 +40,7 @@ public class ControlTictacToe {
         }
 
         // Check  hang doc
-        while (r < GamePlayFragment.numberline - 4) {
+        while (r < Const.NUMBER_ROWS - 4) {
             human = true;
             pc = true;
             for (i = 0; i < 5; i++) {
@@ -62,7 +63,7 @@ public class ControlTictacToe {
             r--;
             c--;
         }
-        while (r < GamePlayFragment.numberline - 4 && c < GamePlayFragment.numberline - 4) {
+        while (r < Const.NUMBER_ROWS - 4 && c < Const.NUMBER_ROWS - 4) {
             human = true;
             pc = true;
             for (i = 0; i < 5; i++) {
@@ -82,12 +83,12 @@ public class ControlTictacToe {
         // Check duong cheo len
         r = row;
         c = col;
-        while (r < GamePlayFragment.numberline - 1 && c > 0) {
+        while (r < Const.NUMBER_ROWS - 1 && c > 0) {
             r++;
             c--;
         }
 
-        while (r >= 4 && c < GamePlayFragment.numberline - 4) {
+        while (r >= 4 && c < Const.NUMBER_ROWS - 4) {
             human = true;
             pc = true;
             for (i = 0; i < 5; i++) {
@@ -109,13 +110,13 @@ public class ControlTictacToe {
 
     // ham luong gia
     public int [][] evalChessBoard(int [][] array, int player) {
-        int [][] eBoard = new int[GamePlayFragment.numberline][GamePlayFragment.numberline];
+        int [][] eBoard = new int[Const.NUMBER_ROWS][Const.NUMBER_ROWS];
         int row, col;
         int ePC, eHuman;
 //        eBoard.resetBoard(); // reset toan bo diem trang thai cua toan bo o co
         // Duyet theo hang
-        for (row = 0; row < GamePlayFragment.numberline; row++)
-            for (col = 0; col < GamePlayFragment.numberline - 4; col++) {
+        for (row = 0; row < Const.NUMBER_ROWS; row++)
+            for (col = 0; col < Const.NUMBER_ROWS - 4; col++) {
                 ePC = 0;
                 eHuman = 0;
                 for (int i = 0; i < 5; i++) {
@@ -145,8 +146,8 @@ public class ControlTictacToe {
             }
 
         // Duyet theo cot
-        for (col = 0; col < GamePlayFragment.numberline; col++)
-            for (row = 0; row < GamePlayFragment.numberline - 4; row++) {
+        for (col = 0; col < Const.NUMBER_ROWS; col++)
+            for (row = 0; row < Const.NUMBER_ROWS - 4; row++) {
                 ePC = 0;
                 eHuman = 0;
                 for (int i = 0; i < 5; i++) {
@@ -177,8 +178,8 @@ public class ControlTictacToe {
             }
 
         // Duyet theo duong cheo xuong
-        for (col = 0; col < GamePlayFragment.numberline - 4; col++)
-            for (row = 0; row < GamePlayFragment.numberline - 4; row++) {
+        for (col = 0; col < Const.NUMBER_ROWS - 4; col++)
+            for (row = 0; row < Const.NUMBER_ROWS - 4; row++) {
                 ePC = 0;
                 eHuman = 0;
                 for (int i = 0; i < 5; i++) {
@@ -209,8 +210,8 @@ public class ControlTictacToe {
             }
 
         // Duyet theo duong cheo len
-        for (row = 4; row < GamePlayFragment.numberline; row++)
-            for (col = 0; col < GamePlayFragment.numberline - 4; col++) {
+        for (row = 4; row < Const.NUMBER_ROWS; row++)
+            for (col = 0; col < Const.NUMBER_ROWS - 4; col++) {
                 ePC = 0; // so quan PC
                 eHuman = 0; // so quan Human
                 for (int i = 0; i < 5; i++) {
@@ -244,8 +245,8 @@ public class ControlTictacToe {
 
     public int getMaxValue(int[][] eBoard){
         int max = eBoard[0][0];
-        for(int i = 0;i< GamePlayFragment.numberline; i++){
-            for(int j = 0; j< GamePlayFragment.numberline; j ++){
+        for(int i = 0;i< Const.NUMBER_ROWS; i++){
+            for(int j = 0; j< Const.NUMBER_ROWS; j ++){
                 if(eBoard[i][j] > max){
                     max = eBoard[i][j];
                 }
@@ -257,8 +258,8 @@ public class ControlTictacToe {
     public NoteModel MaxPos(int[][] eBoard) {
         int Max = 0; // diem max
         NoteModel p = new NoteModel(0, 0, 0);
-        for (int i = 0; i < GamePlayFragment.numberline; i++) {
-            for (int j = 0; j < GamePlayFragment.numberline; j++) {
+        for (int i = 0; i < Const.NUMBER_ROWS; i++) {
+            for (int j = 0; j < Const.NUMBER_ROWS; j++) {
                 if (eBoard[i][j] > Max) {
                     p.x = i;
                     p.y = j;

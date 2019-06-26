@@ -22,6 +22,7 @@ import com.example.trente.myapplication.Tictactoe.Model.Heuristic;
 import com.example.trente.myapplication.Tictactoe.Model.ItemModel;
 import com.example.trente.myapplication.Tictactoe.Model.MinMaxModel;
 import com.example.trente.myapplication.Tictactoe.Model.NoteModel;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
 import com.example.trente.myapplication.Tictactoe.view.MyBoardView;
 import com.example.trente.myapplication.Tictactoe.view.MyCardView;
 
@@ -33,13 +34,13 @@ import java.util.Map;
  */
 
 public class GamePlayFragment extends MyFragment {
-    public static final int maxdept = 9;
-    public static final int numberline = 20;
-    public static final int numberSameWin = 5;
+//    public static final int maxdept = 9;
+//    public static final int numberline = 20;
+//    public static final int numberSameWin = 5;
 //    public MyCardView gameTable;
     public boolean enableTapGame = true;
     public boolean isX = true;
-    int[][] arrayValue = new int[numberline][numberline];
+    int[][] arrayValue;
     public final int ME = 1;
     public final int YOU = 2;
     public static final int DEFAULT = 0;
@@ -59,6 +60,7 @@ public class GamePlayFragment extends MyFragment {
     @Override
     protected void initData() {
         super.initData();
+        arrayValue = new int[Const.NUMBER_ROWS][Const.NUMBER_ROWS];
         if (isX) {
             itemMe = "x";
             itemYou = "o";
@@ -140,8 +142,9 @@ public class GamePlayFragment extends MyFragment {
                                         showDialog(itemYou + " win!", true);
                                     } else if (result == DRAWGAME) {
                                         showDialog("Draw Game! ", true);
+                                    }else {
+                                        enableTapGame = true;
                                     }
-                                    enableTapGame = true;
                                 }
 
                             }
@@ -161,13 +164,22 @@ public class GamePlayFragment extends MyFragment {
         builder.setTitle("");
         builder.setMessage(message);
         builder.setCancelable(false);
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
                 if (isEnd) {
                     getFragmentManager().popBackStack();
                 }
+            }
+        });
+        builder.setNeutralButton("View again", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+//                if (isEnd) {
+//                    getFragmentManager().popBackStack();
+//                }
             }
         });
         AlertDialog alertDialog = builder.create();

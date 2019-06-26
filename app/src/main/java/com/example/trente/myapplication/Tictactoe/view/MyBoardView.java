@@ -96,7 +96,7 @@ public class MyBoardView extends RelativeLayout {
         mPaint.setColor(Color.RED);
         mPaint.setStrokeWidth(2f);
 //        float xWidth = frameWidth/ GamePlayFragment.numberline;
-        for(int i = 1; i < GamePlayFragment.numberline; i++){
+        for(int i = 1; i < Const.NUMBER_ROWS; i++){
             canvas.drawLine(0, i*Const.SIZE_CHEESE, frameWidth, i *Const.SIZE_CHEESE, mPaint);
             canvas.drawLine(i*Const.SIZE_CHEESE, 0, i * Const.SIZE_CHEESE, frameWidth, mPaint);
         }

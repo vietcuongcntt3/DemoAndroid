@@ -3,6 +3,7 @@ package com.example.trente.myapplication.Tictactoe.Model;
 import android.util.Log;
 
 import com.example.trente.myapplication.Tictactoe.GamePlayFragment;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,8 +58,8 @@ public class Heuristic {
     public NoteModel findBestMove(int[][] array, int ME) {
         NoteModel bestNode = null;
         long value = MIN;
-        for (int i = 0; i < GamePlayFragment.numberline; i++) {
-            for (int j = 0; j < GamePlayFragment.numberline; j++) {
+        for (int i = 0; i < Const.NUMBER_ROWS; i++) {
+            for (int j = 0; j < Const.NUMBER_ROWS; j++) {
                 if (array[i][j] == GamePlayFragment.DEFAULT) {
                     array[i][j] = ME;
                     long attack = countAttackRow(array, i, j) + countAttackColumn(array, i, j) + countAttackX1(array, i, j)
@@ -81,8 +82,8 @@ public class Heuristic {
     public static List<NoteModel> findListBestMove(int[][] array, int ME) {
         List<NoteModel> bestListNode = new ArrayList<>();
         long value = MIN;
-        for (int i = 0; i < GamePlayFragment.numberline; i++) {
-            for (int j = 0; j < GamePlayFragment.numberline; j++) {
+        for (int i = 0; i < Const.NUMBER_ROWS; i++) {
+            for (int j = 0; j < Const.NUMBER_ROWS; j++) {
                 if (array[i][j] == GamePlayFragment.DEFAULT) {
                     array[i][j] = ME;
 
@@ -119,11 +120,11 @@ public class Heuristic {
         int countYou = 0;
         int numberdefault = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline) {
+            if (x + index < Const.NUMBER_ROWS) {
                 if (array[x + index][y] == array[x][y]) {
                     countMe++;
                 } else if (array[x + index][y] == GamePlayFragment.DEFAULT) {
-                    if (x + index + 1 < GamePlayFragment.numberline) {
+                    if (x + index + 1 < Const.NUMBER_ROWS) {
                         if (array[x + index + 1][y] == array[x][y]) {
                             numberdefault++;
                             countMe++;
@@ -172,10 +173,10 @@ public class Heuristic {
 //        int bonus = 0;
         int numberdefault = 0;
         for (int index = 1; index < 6; index++) {
-            if (y + index < GamePlayFragment.numberline) {
+            if (y + index < Const.NUMBER_ROWS) {
                 if (array[x][y + index] == array[x][y]) {
                     countMe++;
-                } else if (array[x][y + index] == GamePlayFragment.DEFAULT && y + index + 1 < GamePlayFragment.numberline) {
+                } else if (array[x][y + index] == GamePlayFragment.DEFAULT && y + index + 1 < Const.NUMBER_ROWS) {
                     if (array[x][y + index + 1] == array[x][y]) {
                         numberdefault++;
                         countMe++;
@@ -219,11 +220,11 @@ public class Heuristic {
         int countYou = 0;
         int numberdefault = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline && y + index < GamePlayFragment.numberline) {
+            if (x + index < Const.NUMBER_ROWS && y + index < Const.NUMBER_ROWS) {
                 if (array[x + index][y + index] == array[x][y]) {
                     countMe++;
                 } else if (array[x + index][y + index] == GamePlayFragment.DEFAULT) {
-                    if (y + index + 1 < GamePlayFragment.numberline && x + index + 1 < GamePlayFragment.numberline){
+                    if (y + index + 1 < Const.NUMBER_ROWS && x + index + 1 < Const.NUMBER_ROWS){
                         if(array[x + index + 1][y + index + 1] == array[x][y]) {
                             numberdefault++;
                             countMe++;
@@ -268,11 +269,11 @@ public class Heuristic {
         int countYou = 0;
         int numberdefault = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline && y - index >= 0) {
+            if (x + index < Const.NUMBER_ROWS && y - index >= 0) {
                 if (array[x + index][y - index] == array[x][y]) {
                     countMe++;
                 } else if (array[x + index][y - index] == GamePlayFragment.DEFAULT) {
-                    if (x + index + 1 < GamePlayFragment.numberline && y - index - 1 >= 0){
+                    if (x + index + 1 < Const.NUMBER_ROWS && y - index - 1 >= 0){
                         if(array[x + index + 1][y - index - 1] == array[x][y]) {
                             numberdefault++;
                             countMe++;
@@ -290,11 +291,11 @@ public class Heuristic {
         }
 
         for (int index = 1; index < 6; index++) {
-            if (x - index >= 0 && y + index < GamePlayFragment.numberline) {
+            if (x - index >= 0 && y + index < Const.NUMBER_ROWS) {
                 if (array[x - index][y + index] == array[x][y]) {
                     countMe++;
                 } else if (array[x - index][y + index] == GamePlayFragment.DEFAULT) {
-                    if (x - index - 1 >= 0 && y + index + 1 < GamePlayFragment.numberline && numberdefault == 0) {
+                    if (x - index - 1 >= 0 && y + index + 1 < Const.NUMBER_ROWS && numberdefault == 0) {
                         if(array[x - index - 1][y + index + 1] == array[x][y]) {
                             countMe++;
                         }else if(array[x - index - 1][y + index + 1] != GamePlayFragment.DEFAULT){
@@ -319,7 +320,7 @@ public class Heuristic {
         int countMe = 0;
         int countYou = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline) {
+            if (x + index < Const.NUMBER_ROWS) {
                 if (array[x + index][y] == array[x][y]) {
                     countMe++;
                     break;
@@ -352,7 +353,7 @@ public class Heuristic {
         int countMe = 0;
         int countYou = 0;
         for (int index = 1; index < 6; index++) {
-            if (y + index < GamePlayFragment.numberline) {
+            if (y + index < Const.NUMBER_ROWS) {
                 if (array[x][y + index] == array[x][y]) {
                     countMe++;
                     break;
@@ -387,7 +388,7 @@ public class Heuristic {
         int countMe = 0;
         int countYou = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline && y + index < GamePlayFragment.numberline) {
+            if (x + index < Const.NUMBER_ROWS && y + index < Const.NUMBER_ROWS) {
                 if (array[x + index][y + index] == array[x][y]) {
                     countMe++;
                     break;
@@ -421,7 +422,7 @@ public class Heuristic {
         int countMe = 0;
         int countYou = 0;
         for (int index = 1; index < 6; index++) {
-            if (x + index < GamePlayFragment.numberline && y - index >= 0) {
+            if (x + index < Const.NUMBER_ROWS && y - index >= 0) {
                 if (array[x + index][y - index] == array[x][y]) {
                     countMe++;
                     break;
@@ -434,7 +435,7 @@ public class Heuristic {
         }
 
         for (int index = 1; index < 6; index++) {
-            if (x - index >= 0 && y + index < GamePlayFragment.numberline) {
+            if (x - index >= 0 && y + index < Const.NUMBER_ROWS) {
                 if (array[x - index][y + index] == array[x][y]) {
                     countMe++;
                     break;
