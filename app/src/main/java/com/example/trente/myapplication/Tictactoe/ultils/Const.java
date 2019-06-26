@@ -22,7 +22,7 @@ public class Const {
         String result = "";
         for(int i = 0; i< data.length; i ++){
             for(int j = 0; j<data[i].length; j ++){
-                result += data[i][j] + "|";
+                result += data[i][j] + ",";
             }
         }
         return result;
@@ -30,10 +30,13 @@ public class Const {
 
     public static int[][] convertStringToArray(String data, int lengthX, int lengthY){
         int[][] result = new int[lengthX][lengthY];
-        String[]spilit = data.split("|");
-        for(int i = 0; i< lengthX; i ++){
-            for(int j = 0; j<lengthY; j ++){
-                result[i][j] = Integer.parseInt(spilit[i*lengthY + j]);
+        if(data.length() > lengthX* lengthY) {
+            String[] spilit = data.split(",");
+
+            for (int i = 0; i < lengthX; i++) {
+                for (int j = 0; j < lengthY; j++) {
+                    result[i][j] = Integer.parseInt(spilit[i * lengthY + j]);
+                }
             }
         }
         return result;

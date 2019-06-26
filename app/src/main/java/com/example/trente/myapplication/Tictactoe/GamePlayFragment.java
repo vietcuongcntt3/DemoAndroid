@@ -360,6 +360,14 @@ public class GamePlayFragment extends MyFragment {
     }
 
     @Override
+    public void onPostSuccessResponse(JSONObject response, String responseUrl) {
+        super.onPostSuccessResponse(response, responseUrl);
+        if(APIConfig.API_UPDATE_ROOM_DATA.equals(responseUrl)){
+            Log.e("succes", "success");
+        }
+    }
+
+    @Override
     public void pauseMyFragment(){
         super.pauseMyFragment();
         if(gameType == Const.GAME_TYPE_ONLINE){

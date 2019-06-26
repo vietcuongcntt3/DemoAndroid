@@ -136,6 +136,7 @@ public class RoomDetailFragment extends MyFragment {
                                 fragment.isX = false;
                                 fragment.valueMe = 2;
                                 this.room.status = Const.ROOM_STATUS_PLAYING;
+                                fragment.gameType = Const.GAME_TYPE_ONLINE;
                                 fragment.room = this.room;
                                 ((TictacActivity)getActivity()).addFragment(fragment);
                             }
@@ -190,6 +191,7 @@ public class RoomDetailFragment extends MyFragment {
             fragment.isX = true;
             fragment.valueMe = 1;
             fragment.room = this.room;
+            fragment.gameType = Const.GAME_TYPE_ONLINE;
             ((TictacActivity)getActivity()).addFragment(fragment);
         }
     }
