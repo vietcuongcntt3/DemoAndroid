@@ -50,13 +50,13 @@ public class TictacActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         SharedPreferencesUtils mShare = new SharedPreferencesUtils(this);
         String userId = mShare.readStringPreference("userId","");
-//        if("".equals(userId)){
-//            CreateUserFragMent fragment = new CreateUserFragMent();
-//            addFragment(fragment);
-//        }else {
+        if("".equals(userId)){
+            CreateUserFragMent fragment = new CreateUserFragMent();
+            addFragment(fragment);
+        }else {
             MainFragment fragment = new MainFragment();
             addFragment(fragment);
-//        }
+        }
 
     }
 

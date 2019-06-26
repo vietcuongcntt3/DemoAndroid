@@ -23,6 +23,9 @@ public class RoomModel implements Serializable {
     public String joiner_id;
     public String joiner_date;
     public String joiner_name;
+    public String status;
+    public String newChose;
+    public String turnid;
 
 }
 

@@ -2,6 +2,7 @@ package com.example.trente.myapplication.Tictactoe;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,8 @@ import com.example.trente.myapplication.R;
 import com.example.trente.myapplication.Tictactoe.FragmentBase.MyFragment;
 import com.example.trente.myapplication.Tictactoe.Model.RoomModel;
 import com.example.trente.myapplication.Tictactoe.ultils.APIConfig;
+import com.example.trente.myapplication.Tictactoe.ultils.Const;
+
 import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
@@ -50,6 +53,8 @@ public class RoomDetailFragment extends MyFragment {
     @Override
     protected void initData() {
         super.initData();
+        int[][]data = new int[Const.NUMBER_ROWS][Const.NUMBER_ROWS];
+//        Log.e("cuong1", data.toString());
         if(room.creater_name != null) {
             player1Name.setText(room.creater_name);
         }
@@ -62,6 +67,13 @@ public class RoomDetailFragment extends MyFragment {
                 }else {
                     deleteRoomJoiner(room.roomid);
                 }
+            }
+        });
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startGame();
             }
         });
 
@@ -119,6 +131,14 @@ public class RoomDetailFragment extends MyFragment {
                         }else {
                             this.room = room;
                             showRoom(room);
+                            if(Const.ROOM_STATUS_PLAYING.equals(room.status) && !isAdmin){
+                                GamePlayFragment fragment = new GamePlayFragment();
+                                fragment.isX = false;
+                                fragment.valueMe = 2;
+                                this.room.status = Const.ROOM_STATUS_PLAYING;
+                                fragment.room = this.room;
+                                ((TictacActivity)getActivity()).addFragment(fragment);
+                            }
                         }
                     }else {
                         timer.cancel();
@@ -165,6 +185,12 @@ public class RoomDetailFragment extends MyFragment {
             }
         }else if(APIConfig.API_DELETE_ROOM.equals(responseUrl)){
             getFragmentManager().popBackStack();
+        }else if(APIConfig.API_UPDATE_ROOM_DATA.equals(responseUrl)){
+            GamePlayFragment fragment = new GamePlayFragment();
+            fragment.isX = true;
+            fragment.valueMe = 1;
+            fragment.room = this.room;
+            ((TictacActivity)getActivity()).addFragment(fragment);
         }
     }
 
@@ -192,6 +218,21 @@ public class RoomDetailFragment extends MyFragment {
         },0, 1000);
 
 
+    }
+
+    public void startGame(){
+        Map<String, String> params = new HashMap<>();
+        room.status = Const.ROOM_STATUS_PLAYING;
+        params.put("roomid", room.roomid);
+        params.put("status", room.status);
+        int[][]data = new int[Const.NUMBER_ROWS][Const.NUMBER_ROWS];
+        params.put("data", Const.convertArrayToString(data));
+
+        params.put("turnid","1");
+        params.put("newChose","-1");
+        postRequest(APIConfig.API_UPDATE_ROOM_DATA, params);
+
+        Log.e("cuong", params.toString());
     }
 
 
