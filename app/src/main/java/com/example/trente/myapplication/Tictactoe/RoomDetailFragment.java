@@ -230,7 +230,7 @@ public class RoomDetailFragment extends MyFragment {
         int[][]data = new int[Const.NUMBER_ROWS][Const.NUMBER_ROWS];
         params.put("data", Const.convertArrayToString(data));
 
-        params.put("turnid","1");
+        params.put("turnid","2");
         params.put("newChose","-1");
         postRequest(APIConfig.API_UPDATE_ROOM_DATA, params);
 

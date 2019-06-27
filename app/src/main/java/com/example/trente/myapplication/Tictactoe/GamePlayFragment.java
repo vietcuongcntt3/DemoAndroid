@@ -297,7 +297,7 @@ public class GamePlayFragment extends MyFragment {
                     if(room != null) {
                         this.room = room;
                         if(!Const.ROOM_STATUS_ENDED.equals(this.room.status) && !this.room.turnid.equals(this.valueMe)){
-                            isMeTouch = true;
+                            enableTapGame = true;
                         }
                         int chose = -1;
                         if(!newChose.equals("")){
