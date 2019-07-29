@@ -1,5 +1,7 @@
 package com.example.trente.myapplication.Tictactoe.ultils;
 
+import android.util.Log;
+
 /**
  * Created by cuongnv on 6/25/19.
  */
@@ -23,6 +25,7 @@ public class Const {
         for(int i = 0; i< data.length; i ++){
             for(int j = 0; j<data[i].length; j ++){
                 result += data[i][j] + ",";
+                Log.e("cuong",data[i][j]+" ");
             }
         }
         return result;

@@ -117,6 +117,7 @@ public class GamePlayFragment extends MyFragment {
                         if (enableTapGame && !mBoard.isMove) {
                             int i = mBoard.getLocationXY(x, true);
                             int j = mBoard.getLocationXY(y, false);
+// check o da dc cho chua
 
                             if (arrayValue[i][j] == DEFAULT) {
                                 switch (gameType){
@@ -296,7 +297,7 @@ public class GamePlayFragment extends MyFragment {
                     String newChose = response.optString("newChose");
                     if(room != null) {
                         this.room = room;
-                        if(!Const.ROOM_STATUS_ENDED.equals(this.room.status) && !this.room.turnid.equals(this.valueMe)){
+                        if(!Const.ROOM_STATUS_ENDED.equals(this.room.status) && !this.room.turnid.equals(this.valueMe+"")){
                             enableTapGame = true;
                         }
                         int chose = -1;
@@ -328,6 +329,7 @@ public class GamePlayFragment extends MyFragment {
                     if(i * Const.NUMBER_ROWS + j == newChose){
                         item.isDrawBackground = true;
                     }
+                    mBoard.items.add(item);
                 }
             }
         }
